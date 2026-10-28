@@ -1,0 +1,269 @@
+---
+import '../styles/global.css';
+import { Icon } from 'astro-icon/components';
+import { getEntry, render } from 'astro:content';
+import Layout from '../layouts/MainLayouts.astro';
+import PersonSchema from '../components/PersonSchema.astro';
+
+// Ngala hiji-hijina éntri statis: src/content/bio/bio.md
+const entry = await getEntry('bio', 'bio');
+if (!entry) throw new Error('Eusi bio teu kapendak: src/content/bio/bio.md');
+const { Content } = await render(entry);
+const data = entry.data;
+
+// Umur: paké frontmatter upami dieusi, upami henteu itung tina tanggalLahir
+function hitungUmur(tgl: Date): number {
+    const kiwari = new Date();
+    let umur = kiwari.getFullYear() - tgl.getFullYear();
+    const sasih = kiwari.getMonth() - tgl.getMonth();
+    if (sasih < 0 || (sasih === 0 && kiwari.getDate() < tgl.getDate())) umur--;
+    return umur;
+}
+
+const tanggalLahirDate: Date | undefined = data.tanggalLahir;
+const umur = data.umur ?? (tanggalLahirDate ? hitungUmur(tanggalLahirDate) : undefined);
+const tanggalFormatted = tanggalLahirDate
+    ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(tanggalLahirDate)
+    : undefined;
+
+// Gabung tempat + tanggal lahir gaya database biografi ("Bandung, 17 Agustus 1995")
+const ttl = [data.tempatLahir || undefined, tanggalFormatted].filter(Boolean).join(', ') || undefined;
+
+// Daptar baris biodata — anu kosong otomatis disumputkeun
+const biodataRows: { label: string; value: string | undefined }[] = [
+    { label: 'Nama Lengkap', value: data.namaLengkap },
+    { label: 'Nama Panggilan', value: data.namaPanggilan || undefined },
+    { label: 'Tempat, Tanggal Lahir', value: ttl },
+    { label: 'Umur', value: umur !== undefined ? `${umur} tahun` : undefined },
+    { label: 'Jenis Kelamin', value: data.jenisKelamin || undefined },
+    { label: 'Pasangan', value: data.pasangan || undefined },
+    { label: 'Profesi', value: data.profesi || undefined },
+    { label: 'Zodiak', value: data.zodiak || undefined },
+    { label: 'Kebangsaan', value: data.kebangsaan || undefined },
+    { label: 'Domisili', value: data.domisili || undefined },
+    { label: 'Pendidikan', value: data.pendidikan || undefined },
+    { label: 'Tahun Aktif', value: data.tahunAktif || undefined },
+].filter((row) => row.value);
+
+const siteTitle = `${data.namaLengkap} - Biodata & Biografi`;
+const siteDescription = data.ringkasan ?? `Biodata dan biografi ${data.namaLengkap}.`;
+const photo = data.photo || '/profile2.avif';
+
+// JSON-LD Person Schema: tanggal lahir format ISO, URL absolut upami `site` disetel
+const birthDateISO = tanggalLahirDate ? tanggalLahirDate.toISOString().slice(0, 10) : undefined;
+const pageUrl = Astro.site ? new URL('/bio', Astro.site).href : undefined;
+const imageUrl = Astro.site ? new URL(photo, Astro.site).href : photo;
+---
+
+<Layout title={siteTitle} description={siteDescription}>
+    <PersonSchema
+        name={data.namaLengkap}
+        alternateName={data.namaPanggilan || undefined}
+        jobTitle={data.profesi || undefined}
+        birthDate={birthDateISO}
+        birthPlace={data.tempatLahir || undefined}
+        nationality={data.kebangsaan || undefined}
+        addressLocality={data.domisili || undefined}
+        spouseName={data.pasangan || undefined}
+        image={imageUrl}
+        url={pageUrl}
+        description={data.ringkasan}
+        sameAs={data.sameAs}
+    />
+    <section class="bg-[#F7F5F0] dark:bg-[#0B1220] py-12 sm:py-16 relative overflow-hidden transition-colors duration-300">
+        <div class="blueprint-grid absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+            <!-- Breadcrumb -->
+            <nav aria-label="Breadcrumb" class="mb-8 font-mono text-xs text-slate-500 dark:text-slate-400">
+                <ol class="flex items-center gap-2">
+                    <li><a href="/" class="hover:text-[#E8935B] transition-colors">Beranda</a></li>
+                    <li aria-hidden="true" class="text-slate-400">/</li>
+                    <li aria-current="page" class="text-[#1B4B66] dark:text-[#7BB4D1] font-semibold">Bio</li>
+                </ol>
+            </nav>
+
+            <!-- Judul -->
+            <div class="mb-10">
+                <p class="font-mono text-xs font-semibold text-[#E8935B] tracking-wider mb-2 uppercase">// database_bio.md</p>
+                <h1 class="font-bevan text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0F172A] dark:text-white tracking-tight">
+                    Biodata & <span class="text-[#1B4B66] dark:text-[#7BB4D1]">Biografi</span>
+                </h1>
+                <p class="font-sans mt-3 text-base sm:text-lg text-slate-600 dark:text-slate-400">
+                    {data.namaLengkap}{data.namaPanggilan ? ` — akrab disapa ${data.namaPanggilan}` : ''}
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8 items-start">
+
+                <!-- ===== ARTIKEL BIOGRAFI ===== -->
+                <article class="bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-10 order-2 lg:order-1">
+                    <div class="bio-body">
+                        <Content />
+                    </div>
+
+                    <!-- Navigasi handap -->
+                    <div class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row gap-3">
+                        <a href="/#portfolio" class="inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-semibold text-[#0F172A] bg-[#E8935B] hover:bg-[#DB7F3F] rounded-lg transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B4B66]">
+                            Lihat Karya
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                        <a href="/#contact" class="inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-[#1B4B66] dark:text-[#7BB4D1] bg-transparent border-2 border-[#1B4B66]/30 dark:border-[#7BB4D1]/30 hover:border-[#1B4B66] dark:hover:border-[#7BB4D1] rounded-lg transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B4B66]">
+                            Hubungi Saya
+                        </a>
+                    </div>
+                </article>
+
+                <!-- ===== INFOBOX BIODATA ===== -->
+                <aside class="order-1 lg:order-2 lg:sticky lg:top-28 bg-white dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                    <!-- Poto -->
+                    <div class="relative">
+                        <img src={photo} alt={`Poto ${data.namaLengkap}`} class="w-full aspect-[4/3] object-cover object-center" loading="eager" />
+                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0B1220]/80 to-transparent px-5 pt-10 pb-4">
+                            <p class="font-bevan text-xl text-white leading-tight">{data.namaLengkap}</p>
+                            {data.profesi && (
+                                <p class="font-mono text-xs text-[#E8935B] mt-1">{data.profesi}</p>
+                            )}
+                        </div>
+                    </div>
+
+                    <!-- Judul infobox -->
+                    <div class="flex items-center gap-2 px-5 pt-5 pb-3 border-b border-slate-200 dark:border-slate-700">
+                        <Icon name="lucide:id-card" class="w-4 h-4 text-[#E8935B]" />
+                        <h2 class="font-mono text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Biodata Singkat</h2>
+                    </div>
+
+                    <!-- Tabél biodata -->
+                    <dl class="px-5 py-2">
+                        {biodataRows.map((row) => (
+                            <div class="flex gap-3 py-2.5 border-b border-slate-100 dark:border-slate-700/50 last:border-0">
+                                <dt class="w-32 shrink-0 font-mono text-[11px] uppercase tracking-wide text-slate-400 dark:text-slate-500 pt-0.5">
+                                    {row.label}
+                                </dt>
+                                <dd class="flex-1 text-sm font-medium text-slate-700 dark:text-slate-200">
+                                    {row.value}
+                                </dd>
+                            </div>
+                        ))}
+                    </dl>
+
+                    <div class="px-5 py-3 bg-[#F7F5F0] dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-700">
+                        <p class="font-mono text-[11px] text-slate-400 dark:text-slate-500 text-center">// data terakhir diverifikasi manual</p>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </section>
+</Layout>
+
+<style>
+    .blueprint-grid {
+        background-image:
+            linear-gradient(to right, rgba(27, 75, 102, 0.06) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(27, 75, 102, 0.06) 1px, transparent 1px);
+        background-size: 32px 32px;
+        -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 40%, transparent 90%);
+        mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 40%, transparent 90%);
+    }
+    :global(.dark) .blueprint-grid {
+        background-image:
+            linear-gradient(to right, rgba(123, 180, 209, 0.08) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(123, 180, 209, 0.08) 1px, transparent 1px);
+    }
+
+    /* Tipografi eusi biografi (markdown) — :global supados nerap kana <Content /> */
+    .bio-body :global(p) {
+        color: #475569;
+        line-height: 1.8;
+        margin-bottom: 1.25rem;
+        text-align: justify;
+    }
+    :global(.dark) .bio-body :global(p) {
+        color: #94a3b8;
+    }
+    .bio-body :global(h2) {
+        font-family: "Bevan", serif;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-top: 2.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid rgba(232, 147, 91, 0.35);
+    }
+    .bio-body :global(h2):first-child {
+        margin-top: 0;
+    }
+    :global(.dark) .bio-body :global(h2) {
+        color: #ffffff;
+    }
+    .bio-body :global(h3) {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #1b4b66;
+        margin-top: 1.75rem;
+        margin-bottom: 0.75rem;
+    }
+    :global(.dark) .bio-body :global(h3) {
+        color: #7bb4d1;
+    }
+    .bio-body :global(ul),
+    .bio-body :global(ol) {
+        color: #475569;
+        line-height: 1.8;
+        margin-bottom: 1.25rem;
+        padding-left: 1.5rem;
+    }
+    :global(.dark) .bio-body :global(ul),
+    :global(.dark) .bio-body :global(ol) {
+        color: #94a3b8;
+    }
+    .bio-body :global(ul) {
+        list-style-type: disc;
+    }
+    .bio-body :global(ol) {
+        list-style-type: decimal;
+    }
+    .bio-body :global(li) {
+        margin-bottom: 0.375rem;
+    }
+    .bio-body :global(li)::marker {
+        color: #e8935b;
+    }
+    .bio-body :global(a) {
+        color: #1b4b66;
+        font-weight: 600;
+        text-decoration: underline;
+        text-decoration-color: rgba(232, 147, 91, 0.6);
+        text-underline-offset: 2px;
+    }
+    :global(.dark) .bio-body :global(a) {
+        color: #7bb4d1;
+    }
+    .bio-body :global(strong) {
+        color: #0f172a;
+    }
+    :global(.dark) .bio-body :global(strong) {
+        color: #ffffff;
+    }
+    .bio-body :global(blockquote) {
+        border-left: 3px solid #e8935b;
+        background: rgba(232, 147, 91, 0.08);
+        padding: 1rem 1.25rem;
+        border-radius: 0 0.75rem 0.75rem 0;
+        margin-bottom: 1.25rem;
+        font-style: italic;
+    }
+    .bio-body :global(blockquote p) {
+        margin-bottom: 0;
+    }
+    .bio-body :global(hr) {
+        border-color: #e2e8f0;
+        margin: 2rem 0;
+    }
+    :global(.dark) .bio-body :global(hr) {
+        border-color: #334155;
+    }
+</style>

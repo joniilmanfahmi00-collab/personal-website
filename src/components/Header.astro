@@ -1,0 +1,145 @@
+---
+// src/components/Navbar.astro
+import { Icon } from 'astro-icon/components';
+const menuNav = [
+  { name: 'Beranda', href: '/' },
+  { name: 'Profil', href: '/bio' },
+  { name: 'Proyek', href: '/portfolio' },
+  // Sertifikat disumputkeun heula — aktipkeun deui upami Aa tos gaduh sertifikat:
+  // { name: 'Sertifikat', href: '/certificates' },
+  { name: 'Blog', href: '/blog' },
+  { name: 'Hubungi Saya', href: '/hire-me' },
+];
+
+const pathname = Astro.url.pathname;
+---
+
+<nav class="sticky top-0 z-40 w-full bg-[#F7F5F0]/80 dark:bg-[#0B1220]/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-20">
+        
+        <!-- Logo / Nami Aa -->
+        <a href="/" class="flex items-center z-50 group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B4B66]">
+            <!-- Ngagunakeun bg-gradient-to-r standar Tailwind -->
+            <span class="self-center font-bevan text-2xl uppercase tracking-tight whitespace-nowrap bg-linear-to-r from-[#1B4B66] to-[#E8935B] dark:from-[#7BB4D1] dark:to-[#E8935B] bg-clip-text text-transparent drop-shadow-sm transition-all duration-300 group-hover:opacity-80">
+                Joni Ilman Pahmi
+            </span>
+        </a>
+
+        <!-- MENU DESKTOP (Muncul dina Laptop/Tablet, Leungit dina HP) -->
+        <div class="hidden md:block">
+            <ul class="flex space-x-8 text-sm font-semibold">
+                {menuNav.map((item) => {
+                    const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+                    return (
+                        <li>
+                            <a href={item.href} class={`transition-colors py-2 relative group ${isActive ? 'text-[#1B4B66] dark:text-[#7BB4D1]' : 'text-slate-600 dark:text-slate-300 hover:text-[#E8935B] dark:hover:text-[#E8935B]'}`}>
+                                {item.name}
+                                <!-- Garis handap animasi kanggo menu aktif/hover -->
+                                <span class={`absolute left-0 bottom-0 w-full h-0.5 rounded-full transition-transform duration-300 origin-left ${isActive ? 'bg-[#1B4B66] dark:bg-[#7BB4D1] scale-x-100' : 'bg-[#E8935B] scale-x-0 group-hover:scale-x-100'}`}></span>
+                            </a>
+                        </li>
+                    );
+                })}
+            </ul>
+        </div>
+
+        <!-- TOMBOL HAMBURGER (Ngan muncul dina HP) -->
+        <div class="flex items-center gap-1">
+            <!-- Toggle tema terang/poek -->
+            <button id="theme-toggle" type="button" aria-label="Ganti tema terang atanapi poek" class="p-2 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B4B66]">
+                <span id="theme-icon-moon">
+                    <Icon name="lucide:moon" class="w-5 h-5 block" />
+                </span>
+                <span id="theme-icon-sun" class="hidden">
+                    <Icon name="lucide:sun" class="w-5 h-5 block" />
+                </span>
+            </button>
+            <button id="hamburger-btn" type="button" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="mobile-sidebar" class="block md:hidden p-2 -mr-2 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-lg z-50 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B4B66]">
+            <!-- Ikon garis tilu (Hamburger) -->
+            <svg id="hamburger-icon" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <!-- Ikon silang (X) pas menu dibuka -->
+            <svg id="close-icon" class="w-6 h-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+        </div>
+    </div>
+</nav>
+
+<!-- SIDEBAR MOBILE (Muka ti katuhu ka kenca) -->
+<div id="mobile-sidebar" class="fixed inset-y-0 right-0 z-50 w-72 bg-[#F7F5F0] dark:bg-[#0B1220] shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col pt-24 px-6 border-l border-slate-200 dark:border-slate-800">
+    <ul class="flex flex-col space-y-4 text-base font-semibold">
+        {menuNav.map((item) => {
+            const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+            return (
+                <li>
+                    <a href={item.href} class={`block px-4 py-3 rounded-lg transition-all ${isActive ? 'bg-[#1B4B66]/10 dark:bg-[#7BB4D1]/10 text-[#1B4B66] dark:text-[#7BB4D1]' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800'}`}>
+                        {item.name}
+                    </a>
+                </li>
+            );
+        })}
+    </ul>
+    
+    <!-- Info Tambahan di handap sidebar mobile (Opsional) -->
+    <div class="mt-auto pb-8 px-4 text-xs font-mono text-slate-500 dark:text-slate-400">
+        <p>// v.1.0.0</p>
+        <p>&copy; {new Date().getFullYear()} Joni Ilman Pahmi.</p>
+    </div>
+</div>
+
+<!-- BACKGROUND LAYER (Overlay poek saeutik pami sidebar nuju buka) -->
+<!-- Z-index dijieun 40 sangkan pas di handapeun sidebar nu z-50 -->
+<div id="sidebar-overlay" class="fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm hidden md:hidden transition-opacity"></div>
+
+<!-- LOGIKA JAVASCRIPT KANGGO BUKA TUTUP -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('hamburger-btn');
+        const sidebar = document.getElementById('mobile-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const hIcon = document.getElementById('hamburger-icon');
+        const cIcon = document.getElementById('close-icon');
+
+        function toggleMenu() {
+            // Cegah scroll di body pas menu mobile kebuka
+            document.body.classList.toggle('overflow-hidden');
+            
+            sidebar?.classList.toggle('translate-x-full');
+            var isOpen = !!sidebar && !sidebar.classList.contains('translate-x-full');
+            btn?.setAttribute('aria-expanded', String(isOpen));
+            overlay?.classList.toggle('hidden');
+            hIcon?.classList.toggle('hidden');
+            cIcon?.classList.toggle('hidden');
+        }
+
+        btn?.addEventListener('click', toggleMenu);
+
+        // Tutup sidebar mobile pas mencet Escape atanapi salah sahiji menuna
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar && !sidebar.classList.contains('translate-x-full')) toggleMenu();
+        });
+        sidebar?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+            if (sidebar && !sidebar.classList.contains('translate-x-full')) toggleMenu();
+        }));
+
+        // Toggle tema terang/poek + simpen pilihan user
+        const themeBtn = document.getElementById('theme-toggle');
+        const iconSun = document.getElementById('theme-icon-sun');
+        const iconMoon = document.getElementById('theme-icon-moon');
+        const syncThemeIcon = () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            iconSun?.classList.toggle('hidden', !isDark);
+            iconMoon?.classList.toggle('hidden', isDark);
+        };
+        syncThemeIcon();
+        themeBtn?.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+            syncThemeIcon();
+        });
+        overlay?.addEventListener('click', toggleMenu);
+    });
+</script>

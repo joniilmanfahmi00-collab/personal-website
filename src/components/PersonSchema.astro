@@ -1,0 +1,53 @@
+---
+// src/components/PersonSchema.astro
+// JSON-LD Person Schema Markup (SEO) — widang anu kosong otomatis teu di-render.
+interface Props {
+  name: string;
+  alternateName?: string;
+  jobTitle?: string;
+  birthDate?: string; // Format ISO: YYYY-MM-DD
+  birthPlace?: string;
+  nationality?: string;
+  addressLocality?: string;
+  spouseName?: string;
+  image?: string;
+  url?: string;
+  description?: string;
+  sameAs?: string[];
+}
+
+const {
+  name,
+  alternateName,
+  jobTitle,
+  birthDate,
+  birthPlace,
+  nationality,
+  addressLocality,
+  spouseName,
+  image,
+  url,
+  description,
+  sameAs,
+} = Astro.props;
+
+const jsonLd: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name,
+};
+
+if (alternateName) jsonLd.alternateName = alternateName;
+if (jobTitle) jsonLd.jobTitle = jobTitle;
+if (birthDate) jsonLd.birthDate = birthDate;
+if (birthPlace) jsonLd.birthPlace = birthPlace;
+if (nationality) jsonLd.nationality = nationality;
+if (addressLocality) jsonLd.address = { '@type': 'PostalAddress', addressLocality };
+if (spouseName) jsonLd.spouse = { '@type': 'Person', name: spouseName };
+if (image) jsonLd.image = image;
+if (url) jsonLd.url = url;
+if (description) jsonLd.description = description;
+if (sameAs?.length) jsonLd.sameAs = sameAs;
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

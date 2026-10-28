@@ -1,0 +1,155 @@
+---
+import '../../styles/global.css';
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/MainLayouts.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts
+    .filter((post) => !post.data.draft)
+    .map((post) => {
+      const slug = post.id.replace(/\.(md|mdx)$/i, '');
+      return {
+        params: { slug },
+        props: { post },
+      };
+    });
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const postSlug = post.id.replace(/\.(md|mdx)$/i, '');
+const date = new Intl.DateTimeFormat('id-ID', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+}).format(post.data.pubDate);
+
+const allPosts = (await getCollection('blog')).filter((item) => !item.data.draft && item.id !== post.id);
+const relatedPosts = allPosts
+  .filter((item) => item.data.category === post.data.category)
+  .slice(0, 3);
+---
+
+<Layout title={post.data.title} description={post.data.description}>
+  <div class="fixed left-0 top-0 z-50 h-1 w-full bg-slate-200 dark:bg-slate-800">
+    <div id="reading-progress" class="h-full bg-linear-to-r from-[#1B4B66] to-[#E8935B]" style="width: 0%"></div>
+  </div>
+
+  <article class="bg-[#F7F5F0] dark:bg-[#0B1220] py-16 sm:py-20 transition-colors duration-300">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Breadcrumb" class="mb-8 font-mono text-xs text-slate-500 dark:text-slate-400">
+        <ol class="flex items-center gap-2 flex-wrap">
+          <li><a href="/" class="hover:text-[#E8935B] transition-colors">Beranda</a></li>
+          <li aria-hidden="true" class="text-slate-400">/</li>
+          <li><a href="/blog" class="hover:text-[#E8935B] transition-colors">Blog</a></li>
+          <li aria-hidden="true" class="text-slate-400">/</li>
+          <li aria-current="page" class="text-[#1B4B66] dark:text-[#7BB4D1] font-semibold">{post.data.title}</li>
+        </ol>
+      </nav>
+
+      <header class="mb-8">
+        <p class="font-mono text-xs font-semibold text-[#E8935B] tracking-wider mb-3 uppercase">{post.data.category}</p>
+        <h1 class="font-bevan text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0F172A] dark:text-white tracking-tight leading-tight">
+          {post.data.title}
+        </h1>
+        <div class="mt-5 flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+          <span>{post.data.author}</span>
+          <span class="text-slate-400">•</span>
+          <time datetime={post.data.pubDate.toISOString()}>{date}</time>
+        </div>
+      </header>
+
+      <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800/50 shadow-sm">
+        <img src={post.data.image || '/hero.jpg'} alt={post.data.title} class="h-72 w-full object-cover sm:h-80 md:h-96" loading="eager" />
+      </div>
+
+      <div class="prose prose-slate max-w-none mt-10 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200 prose-headings:font-bevan prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-img:rounded-2xl prose-a:text-[#1B4B66] dark:prose-invert dark:bg-slate-800/50 dark:ring-slate-700 sm:p-8 dark:prose-a:text-[#7BB4D1]">
+        <Content />
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        {post.data.tags.map((tag) => (
+          <span class="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200">
+            #{tag}
+          </span>
+        ))}
+      </div>
+
+      <div class="mt-10 flex flex-col gap-4 border-t border-slate-200 pt-6 dark:border-slate-700 sm:flex-row sm:items-center sm:justify-between">
+        <a href="/blog" class="inline-flex items-center gap-2 text-sm font-semibold text-[#1B4B66] dark:text-[#7BB4D1] hover:text-[#E8935B] transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+          Kembali ke Blog
+        </a>
+
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Share</span>
+          <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.data.title)}&url=${encodeURIComponent(`https://joniilmanpahmi.online/blog/${postSlug}`)}`} target="_blank" rel="noopener noreferrer" class="rounded-full border border-slate-200 bg-white p-2 text-slate-600 transition hover:border-[#1B4B66] hover:text-[#1B4B66] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+            X
+          </a>
+          <a href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://joniilmanpahmi.online/blog/${postSlug}`)}`} target="_blank" rel="noopener noreferrer" class="rounded-full border border-slate-200 bg-white p-2 text-slate-600 transition hover:border-[#1B4B66] hover:text-[#1B4B66] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+            in
+          </a>
+          <a href={`https://wa.me/?text=${encodeURIComponent(`${post.data.title} https://joniilmanpahmi.online/blog/${postSlug}`)}`} target="_blank" rel="noopener noreferrer" class="rounded-full border border-slate-200 bg-white p-2 text-slate-600 transition hover:border-[#1B4B66] hover:text-[#1B4B66] dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+            WA
+          </a>
+        </div>
+      </div>
+
+      {relatedPosts.length > 0 && (
+        <section class="mt-14">
+          <h2 class="mb-6 font-bevan text-2xl text-[#0F172A] dark:text-white">Artikel Terkait</h2>
+          <div class="grid gap-5 md:grid-cols-3">
+            {relatedPosts.map((item) => {
+              const itemSlug = item.id.replace(/\.(md|mdx)$/i, '');
+              const itemDate = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(item.data.pubDate);
+              return (
+                <a href={`/blog/${itemSlug}`} class="group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-md dark:border-slate-700 dark:bg-slate-800/50">
+                  <div class="mb-3 overflow-hidden rounded-xl">
+                    <img src={item.data.image || '/hero.jpg'} alt={item.data.title} class="h-40 w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy" />
+                  </div>
+                  <p class="text-xs font-mono uppercase tracking-[0.15em] text-[#E8935B]">{item.data.category}</p>
+                  <h3 class="mt-2 text-lg font-bold text-[#0F172A] dark:text-white">{item.data.title}</h3>
+                  <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">{itemDate}</p>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      <section class="mt-14 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800/50">
+        <div id="disqus_thread"></div>
+      </section>
+    </div>
+  </article>
+
+  <script is:inline>
+    const progressBar = document.getElementById('reading-progress');
+    const updateProgress = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      if (progressBar) progressBar.style.width = `${Math.min(Math.max(progress, 0), 100)}%`;
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    const disqusConfig = {
+      url: `https://joniilmanpahmi.online/blog/${window.location.pathname.split('/').filter(Boolean).slice(-1)[0]}`,
+      identifier: `blog-${window.location.pathname.split('/').filter(Boolean).slice(-1)[0]}`,
+      title: document.title,
+    };
+
+    const s = document.createElement('script');
+    s.src = 'https://joniilmanpahmi.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', String(Date.now()));
+    s.async = true;
+    document.body.appendChild(s);
+    window.disqus_config = function () {
+      this.page.url = disqusConfig.url;
+      this.page.identifier = disqusConfig.identifier;
+      this.page.title = disqusConfig.title;
+    };
+  </script>
+</Layout>

@@ -1,0 +1,183 @@
+---
+// src/components/HeroTerminal.astro
+---
+<div class="w-full max-w-lg rounded-xl overflow-hidden bg-gray-900 shadow-2xl border border-gray-700/50 transform transition-transform duration-500 hover:scale-105 relative z-10">
+    
+    <!-- Header Terminal -->
+    <div class="flex items-center px-4 py-3 bg-gray-800 border-b border-gray-700">
+        <div class="flex space-x-2">
+            <div class="w-3 h-3 bg-red-500 rounded-full hover:bg-red-600 cursor-pointer"></div>
+            <div class="w-3 h-3 bg-yellow-400 rounded-full hover:bg-yellow-500 cursor-pointer"></div>
+            <div class="w-3 h-3 bg-green-500 rounded-full hover:bg-green-600 cursor-pointer"></div>
+        </div>
+        <div class="ml-4 flex-1 text-center text-xs text-gray-400 font-mono opacity-80">
+            bash - joni-ilman-pahmi
+        </div>
+        <div class="w-12"></div>
+    </div>
+    
+    <!-- Eusi Terminal -->
+    <div class="p-6 text-sm md:text-base font-mono text-gray-300 leading-relaxed h-64">
+        
+        <!-- Baris Input (Dianggo gentian ku JavaScript) -->
+        <div class="flex mb-1">
+            <span class="text-green-400 mr-2 font-bold">joni@dev:~$</span>
+            <span id="active-cmd" class="text-white"></span>
+            <span id="active-cursor" class="w-2.5 h-5 bg-gray-400 animate-pulse inline-block ml-1"></span>
+        </div>
+        
+        <!-- Output 1: Astro (Mimitina Disumputkeun) -->
+        <div id="out-astro" class="hidden text-gray-400 mb-4 ml-4">
+            > joni-portfolio@1.0.0 dev <br/>
+            > astro dev <br/>
+            <span class="text-cyan-400">🚀 astro v4.x.x started in 120ms</span>
+        </div>
+        
+        <!-- Output 2: Laravel (Mimitina Disumputkeun) -->
+        <div id="out-laravel" class="hidden mb-4 ml-4">
+            <span class="bg-gray-700 text-green-400 px-2 py-0.5 rounded text-sm">INFO</span> 
+            <span class="text-gray-300">Server running on [http://127.0.0.1:8000].</span>
+        </div>
+
+        <!-- Output 3: Golang (GoFiber) -->
+        <div id="out-golang" class="hidden mb-4 ml-4">
+            > Fiber v2.x.x started in 150ms
+            <br/>
+            <span class="text-gray-300">Listening on [http://127.0.0.1:8080].</span>
+            <br/>
+            > Access From Sunday, June 10 202.x 10:00:00 AM
+        </div>
+
+        <!-- Output 4: FastAPI (Python) -->
+        <div id="out-fastapi" class="hidden mb-4 ml-4">
+            <span class="bg-gray-700 text-green-400 px-2 py-0.5 rounded text-sm">INFO</span> 
+            <span class="text-gray-300">Will watch for changes in these directories: ['/path/to/your/project']</span>
+            <br/>
+            <span class="bg-gray-700 text-green-400 px-2 py-0.5 rounded text-sm">INFO</span>
+            <span class="text-gray-300">Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)</span>
+        </div>
+
+        <div id="out-solid-vue-js" class="hidden mb-4 ml-4">
+        </div>
+            
+    </div>    
+</div>
+
+<!-- Efek Cahaya (Glow) -->
+<div class="absolute -inset-1 bg-linear-to-r from-blue-600 to-cyan-500 rounded-xl blur opacity-20 -z-10"></div>
+
+<!-- JavaScript Kanggo Animasi Ngetik (Looping) -->
+<script>
+    const runTerminalAnimation = async () => {
+        // Fungsi pambantu kanggo delay
+        const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+        // Fungsi pambantu kanggo ngetik
+        const typeText = async (elementId: string, text: string, speed: number = 80) => {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            el.textContent = '';
+            for (let i = 0; i < text.length; i++) {
+                el.textContent += text.charAt(i);
+                await wait(speed + Math.random() * 50);
+            }
+        };
+
+        // Ambil elemen HTML
+        const cmd = document.getElementById('active-cmd');
+        const cursor = document.getElementById('active-cursor');
+        const outAstro = document.getElementById('out-astro');
+        const outLaravel = document.getElementById('out-laravel');
+        const outGolang = document.getElementById('out-golang');
+        const outFastapi = document.getElementById('out-fastapi');
+        await wait(600); // Ngantosan sakedap pas website load awal
+
+        // INFINITE LOOP (Muter saterusna)
+        while (true) {
+            
+            // ================= SCENE 1: ASTRO =================
+            // 1. Reset heula layar terminalna
+            if (cursor) cursor.classList.remove('hidden');
+            if (outAstro) outAstro.classList.add('hidden');
+            if (outLaravel) outLaravel.classList.add('hidden');
+            if (outGolang) outGolang.classList.add('hidden');
+            if (outFastapi) outFastapi.classList.add('hidden');
+            if (cmd) cmd.textContent = '';
+            await wait(500);
+
+            // 2. Ngetik perintah Astro
+            await typeText('active-cmd', 'npm run dev');
+            await wait(300); // Ngantosan saacan di-enter
+            
+            // 3. Munculkeun output Astro
+            if (cursor) cursor.classList.add('hidden');
+            if (outAstro) outAstro.classList.remove('hidden');
+            
+            // 4. Jeda ningalikeun hasil Astro (misalna 3 detik)
+            await wait(3000);
+
+
+            // ================= SCENE 2: LARAVEL =================
+            // 1. Clear terminal sapertos di Linux/Mac (ctrl+L)
+            if (outAstro) outAstro.classList.add('hidden');
+            if (outFastapi) outFastapi.classList.add('hidden');
+            if (outGolang) outGolang.classList.add('hidden');
+            if (cursor) cursor.classList.remove('hidden');
+            if (cmd) cmd.textContent = '';
+            await wait(500);
+
+            // 2. Ngetik perintah Laravel
+            await typeText('active-cmd', 'php artisan serve');
+            await wait(300); // Ngantosan saacan di-enter
+            
+            // 3. Munculkeun output Laravel
+            if (cursor) cursor.classList.add('hidden');
+            if (outLaravel) outLaravel.classList.remove('hidden');
+            
+            // 4. Jeda ningalikeun hasil Laravel sateuacan uih deui ka luhur
+            await wait(3000);
+
+            // ================= SCENE 3: GOLANG (GoFiber) =================
+            // 1. Clear terminal
+            if (outLaravel) outLaravel.classList.add('hidden');
+            if (outGolang) outGolang.classList.add('hidden');
+            if (outFastapi) outFastapi.classList.add('hidden');
+            if (cursor) cursor.classList.remove('hidden');
+            if (cmd) cmd.textContent = '';
+            await wait(500);
+
+            // 2. Ngetik perintah GoFiber
+            await typeText('active-cmd', 'go run main.go');
+            await wait(300); // Ngantosan saacan di-enter
+
+            // 3. Munculkeun output GoFiber
+            if (cursor) cursor.classList.add('hidden');
+            if (outGolang) outGolang.classList.remove('hidden');
+
+            // 4. Jeda ningalikeun hasil GoFiber
+            await wait(3000);
+
+            // ================= SCENE 4: FASTAPI (Python) =================
+            // 1. Clear terminal
+            if (outGolang) outGolang.classList.add('hidden');
+            if (outFastapi) outFastapi.classList.add('hidden');
+            if (cursor) cursor.classList.remove('hidden');
+            if (cmd) cmd.textContent = '';
+            await wait(500);
+
+            // 2. Ngetik perintah FastAPI
+            await typeText('active-cmd', 'uvicorn main:app --reload');
+            await wait(300); // Ngantosan saacan di-enter
+
+            // 3. Munculkeun output FastAPI
+            if (cursor) cursor.classList.add('hidden');
+            if (outFastapi) outFastapi.classList.remove('hidden');
+
+            // 4. Jeda ningalikeun hasil FastAPI
+            await wait(3000);
+        }
+    };
+
+    // Jalankeun animasina
+    runTerminalAnimation();
+</script>

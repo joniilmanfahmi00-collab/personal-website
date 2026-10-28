@@ -1,0 +1,645 @@
+---
+import '../styles/global.css';
+import { Icon } from 'astro-icon/components';
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/MainLayouts.astro';
+import HeroTerminal from '../components/HeroTerminal.astro';
+
+const siteTitle = 'Joni Ilman Pahmi - Web Developer Full-Stack & Freelancer';
+
+// TODO: Ganti dengan alamat email asli sebelum deploy.
+const contactEmail = "halo@joniilmanpahmi.online";
+const contactMailto = `mailto:${contactEmail}?subject=Diskusi%20Proyek%20-%20Joni%20Ilman%20Pahmi`;
+const siteDescription = 'Selamat datang di situs resmi Joni Ilman Pahmi, seorang pengembang web full-stack yang fokus pada pembuatan aplikasi web modern. Temukan portofolio, blog, dan informasi kontak di sini.';
+
+const statusBar = [
+    { icon: 'lucide:rocket', label: 'Prioritas Performa' },
+    { icon: 'lucide:shield-check', label: 'Keamanan' },
+    { icon: 'lucide:user-check', label: 'Prioritas UX' },
+    { icon: 'lucide:code', label: 'Kode Bersih' },
+    { icon: 'lucide:cog', label: 'Mudah Dirawat' },
+];
+
+const featuredProjects = [
+    {
+        title: "WarungPress",
+        description: "Jembatan WhatsApp open-source untuk WooCommerce yang menghubungkan proses checkout toko online ke WhatsApp secara otomatis.",
+        tech: ["PHP", "WooCommerce", "WordPress"],
+        image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        liveUrl: "#",
+        githubUrl: "https://github.com",
+    },
+    {
+        title: "MiniFlix - Telegram App",
+        description: "Aplikasi streaming film berbasis katalog interaktif yang dirancang untuk menjalankan fungsi micro-app langsung di dalam ekosistem Telegram.",
+        tech: ["JavaScript", "Tailwind", "Telegram API"],
+        image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        liveUrl: "#",
+        githubUrl: null, // Biarkan null jika proyek bersifat *closed source*.
+    },
+    {
+        title: "Preneur.space Web System",
+        description: "Preneur.space adalah layanan konsultasi independen dengan model done-for-you (DFY) yang berfokus pada optimasi performa website WordPress dan WooCommerce serta pengelolaan kampanye Google Ads untuk solopreneur dan usaha kecil-menengah (UKM).",
+        tech: ["Python", "Flask", "Bootstrap 5"],
+        image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        liveUrl: "https://preneur.space/",
+        githubUrl: null,
+    }
+];
+
+const techStackCategories = [
+    {
+        category: "Backend & Framework",
+        description: "Pondasi logika dan sistem inti aplikasi.",
+        skills: [
+            { name: "PHP", icon: "tabler:brand-php", level: "Advanced" },
+            { name: "Laravel", icon: "tabler:brand-laravel", level: "Expert" },
+            { name: "CodeIgniter", icon: "tabler:code", level: "Advanced" },
+            { name: "Python", icon: "tabler:brand-python", level: "Intermediate" },
+            { name: "Flask", icon: "tabler:server", level: "Intermediate" },
+            { name: "Node.js", icon: "tabler:brand-nodejs", level: "Intermediate" },
+            { name: "Go", icon: "tabler:brand-golang", level: "Beginner/Exploring" },
+            { name: "Astro", icon: "tabler:brand-astro", level: "Intermediate" },
+            { name: "NextJS", icon: "tabler:brand-nextjs", level: "Advanced"},
+            { name: "NestJS", icon: "simple-icons:nestjs", level: "Advanced" },
+            { name: "AdonisJS", icon: "simple-icons:adonisjs", level: "Advanced" }
+        ]
+    },
+    {
+        category: "Frontend & UI",
+        description: "Antarmuka interaktif dan responsif dengan fokus pada pengalaman pengguna (UX).",
+        skills: [
+            { name: "Tailwind CSS", icon: "tabler:brand-tailwind", level: "Expert" },
+            { name: "Bootstrap", icon: "tabler:brand-bootstrap", level: "Advanced" },
+            { name: "Alpine.js", icon: "tabler:bolt", level: "" },
+            { name: "HTMX", icon: "tabler:activity", level: "Expert" },
+            { name: "JavaScript", icon: "tabler:brand-javascript", level: "Advanced" },
+            { name: "TypeScript", icon: "tabler:brand-typescript", level: "Advanced" },
+            { name: "Astro", icon: "tabler:brand-astro", level: "Expert" },
+            { name: "React", icon: "tabler:brand-react", level: "Advanced"},
+            { name: "Vue", icon: "tabler:brand-vue", level: "Advanced"}
+        ]
+    },
+    {
+        category: "Database, Server & Tools",
+        description: "Manajemen data, server, kontrol versi, dan ekosistem CMS.",
+        skills: [
+            { name: "PostgreSQL", icon: "tabler:database", level: "Advanced" },
+            { name: "SQLite", icon: "tabler:coin", level: "Advanced" },
+            { name: "MySQL", icon: "tabler:brand-mysql", level: "Advanced" }, 
+            { name: "WordPress", icon: "tabler:brand-wordpress", level: "Expert" },
+            { name: "Git", icon: "tabler:brand-git", level: "Advanced" },
+            { name: "RabbitMQ", icon: "simple-icons:rabbitmq", level: "Beginner" },
+            { name: "Kafka", icon: "simple-icons:apachekafka", level: "Beginner" },
+            { name: "GCP", icon: "simple-icons:googlecloud", level: "Intermediate" },
+            { name: "Supabase", icon: "simple-icons:supabase", level: "Beginner" },
+            { name: "Cloudflare", icon: "simple-icons:cloudflare", level: "Expert" },
+            { name: "Vercel", icon: "simple-icons:vercel", level: "Advanced" },
+            { name: "Netlify", icon: "simple-icons:netlify", level: "Advanced" }
+        ]
+    }, 
+];
+const allPosts = await getCollection('blog');
+const publishedPosts = allPosts
+    .filter((post) => !post.data.draft)
+    .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf())
+    .slice(0, 3);
+
+const kategoriBlog = ['Semua', ...new Set(publishedPosts.map((post) => post.data.category))];
+
+const purwarupaArtikel = publishedPosts.map((post) => {
+    const slug = post.id.replace(/\.(md|mdx)$/i, '');
+    const body = post.body ?? '';
+    const readTime = `${Math.max(1, Math.ceil(body.split(/\s+/).filter(Boolean).length / 220))} menit baca`;
+    const date = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(post.data.pubDate);
+
+    return {
+        title: post.data.title,
+        excerpt: post.data.description,
+        category: post.data.category,
+        date,
+        readTime,
+        link: `/blog/${slug}`,
+    };
+});
+---
+
+<Layout title={siteTitle} description={siteDescription}>
+
+    <!-- ================= HERO SECTION ================= -->
+    <section class="relative bg-[#F7F5F0] dark:bg-[#0B1220] min-h-screen flex items-center justify-center overflow-hidden pb-16">
+
+        <!-- Tekstur grid blueprint -->
+        <div class="blueprint-grid absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+
+        <!-- Kontainer utama menggunakan max-w-7xl agar konsisten di berbagai ukuran layar. -->
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="lg:grid lg:grid-cols-2 lg:gap-12 items-center py-12 md:py-20 lg:py-24">
+
+                <!-- ================= KOLOM 1: TEKS & TOMBOL ================= -->
+                <div class="mb-14 lg:mb-0 text-center lg:text-left flex flex-col items-center lg:items-start">
+
+                    <!-- Terminal prompt -->
+                    <div class="terminal-prompt inline-flex flex-col gap-1 mb-6 px-4 py-3 rounded-lg font-mono text-xs sm:text-sm text-left w-fit">
+                        <span class="text-[#4C9A6A]">guest@jonipahmi:~$ whoami</span>
+                        <span class="text-slate-300">
+                            <span class="text-[#E8935B]">&gt;</span> Pengembang Web Full-Stack · Freelancer · Kreator Konten <span class="cursor-blink text-slate-300" aria-hidden="true">▍</span>
+                        </span>
+                    </div>
+
+                    <!-- Headline -->
+                    <h1 class="font-bevan text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight pb-4 text-[#0F172A] dark:text-white tracking-tight">
+                        Membangun <br class="hidden lg:block" />
+                        <span class="relative whitespace-nowrap inline-block mt-2">
+                            <span class="relative z-10 text-[#1B4B66] dark:text-[#7BB4D1]">Sistem Web</span>
+                            <svg class="absolute -bottom-2 left-0 w-full h-3 sm:h-4 text-[#E8935B]/70" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">
+                                <path d="M0,8 Q50,0 100,6 T200,4" stroke="currentColor" stroke-width="4" fill="none" />
+                            </svg>
+                        </span> <br class="hidden lg:block" />
+                        <span class="inline-block mt-2">Untuk Kebutuhan Anda.</span>
+                    </h1>
+
+                    <!-- Deskripsi -->
+                    <p class="font-sans py-4 text-base sm:text-lg text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed mx-auto lg:mx-0">
+                        Saya merancang dan mengembangkan aplikasi web kustom yang modern, cepat, dan terukur. Mari wujudkan ide digital Anda menjadi produk yang nyata dan fungsional.
+                    </p>
+
+                    <!-- Social Proof Klien -->
+                    <div class="flex flex-col sm:flex-row items-center mt-4 gap-3 sm:gap-4">
+                        <div class="flex -space-x-3 shrink-0">
+                            <!-- Gunakan ring agar foto profil yang bertumpuk terlihat lebih rapi. -->
+                            <img class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-[#F7F5F0] dark:ring-[#0B1220] object-cover" src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=880&q=80" alt="Klien 1" loading="lazy" />
+                            <img class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-[#F7F5F0] dark:ring-[#0B1220] object-cover" src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=880&q=80" alt="Klien 2" loading="lazy" />
+                            <img class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-[#F7F5F0] dark:ring-[#0B1220] object-cover" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=880&q=80" alt="Klien 3" loading="lazy" />
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full ring-2 ring-[#F7F5F0] dark:ring-[#0B1220] bg-[#1B4B66] flex items-center justify-center text-xs sm:text-sm font-bold text-white relative z-10 shadow-sm">
+                                +50
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed text-center sm:text-left">
+                            Dipercaya oleh lebih dari <span class="font-semibold text-[#0F172A] dark:text-white">50 klien</span><br class="hidden sm:block"/> di seluruh Indonesia.
+                        </p>
+                    </div>
+
+                    <!-- Tombol -->
+                    <div class="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center lg:justify-start">
+                        <a href="#contact" class="w-full sm:w-auto justify-center px-7 py-3.5 text-base font-semibold text-[#0F172A] bg-[#E8935B] hover:bg-[#DB7F3F] rounded-lg transition-all shadow-md shadow-[#E8935B]/30 flex items-center gap-2 group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B4B66]">
+                            <span>Mari Diskusi</span>
+                            <svg class="w-5 h-5 transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                        <a href="#portfolio" class="w-full sm:w-auto justify-center flex items-center px-7 py-3.5 text-base font-semibold text-[#1B4B66] dark:text-[#7BB4D1] bg-transparent border-2 border-[#1B4B66]/30 dark:border-[#7BB4D1]/30 hover:border-[#1B4B66] dark:hover:border-[#7BB4D1] rounded-lg transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B4B66]">
+                            Lihat Karya
+                        </a>
+                    </div>
+                </div> 
+
+                <!-- ================= KOLOM 2: HERO TERMINAL ================= -->
+                <div class="flex justify-center items-center relative w-full max-w-lg mx-auto lg:max-w-none">
+                    <HeroTerminal />
+                </div> 
+
+            </div>
+        </div>
+
+        <!-- ================= STATUS BAR ================= -->
+        <div class="statusbar absolute bottom-0 left-0 w-full overflow-x-auto whitespace-nowrap scrollbar-hide z-20">
+            <div class="flex justify-start sm:justify-center text-xs font-mono min-w-max mx-auto px-4">
+                {statusBar.map((item) => (
+                    <div class="statusbar-item flex items-center gap-1.5 px-4 py-3 sm:py-2.5">
+                        <Icon name={item.icon} class="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+                        <span class="font-medium tracking-tight">{item.label}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ================= ABOUT SECTION ================= -->
+    <section id="about" class="bg-white dark:bg-[#0F172A] relative overflow-hidden border-t border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="relative z-10 bg-white dark:bg-[#0F172A] pb-8 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+
+                <!-- Efek potongan diagonal -->
+                <svg class="hidden lg:block absolute right-0 inset-y-0 h-full w-48 text-white dark:text-[#0F172A] transform translate-x-1/2"
+                    fill="currentColor" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                    <polygon points="50,0 100,0 50,100 0,100"></polygon>
+                </svg>
+
+                <main class="mx-auto mt-10 max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
+                    <div class="text-center lg:text-left">
+                        <p class="font-mono text-xs font-semibold text-[#E8935B] tracking-wider mb-2 uppercase">// about.md</p>
+                        <h2 class="font-bevan my-4 text-3xl tracking-tight font-extrabold text-[#0F172A] dark:text-white sm:text-4xl md:text-5xl">
+                            Tentang <span class="text-[#1B4B66] dark:text-[#7BB4D1]">Saya</span>
+                        </h2>
+
+                        <p class="font-sans text-base sm:text-lg text-slate-600 dark:text-slate-400 sm:mx-auto sm:max-w-xl lg:mx-0 text-justify leading-relaxed">
+                            Halo! Saya <strong class="text-[#0F172A] dark:text-white font-semibold">Joni Ilman Pahmi</strong>, seorang Full-Stack Web Developer yang gemar meracik kode menjadi aplikasi fungsional dan terukur. Saya memiliki pengalaman mendalam dalam membangun sistem menggunakan teknologi modern seperti PHP, Node.js, Go dan Python, serta merancang antarmuka interaktif.
+                            <br /><br />
+                            Fokus utama saya adalah menciptakan solusi digital yang tidak hanya memiliki performa tinggi, tetapi juga kode yang bersih. Saya percaya bahwa setiap proyek adalah kesempatan untuk belajar dan berinovasi.
+                        </p>
+
+                        <div class="mt-8 flex items-center justify-center lg:justify-start">
+                            <a href="/bio" class="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-[#1B4B66] dark:text-[#7BB4D1] bg-[#1B4B66]/5 border border-[#1B4B66]/20 hover:bg-[#1B4B66]/10 dark:bg-[#7BB4D1]/10 dark:border-[#7BB4D1]/30 dark:hover:bg-[#7BB4D1]/20 rounded-lg transition-all group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B4B66]">
+                                Kenalan Yuk!
+                                <svg class="w-4 h-4 transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 p-4 sm:p-8 lg:p-0">
+            <div class="photo-frame h-72 sm:h-96 lg:h-full w-full max-w-2xl mx-auto lg:max-w-none">
+                <img class="h-full w-full object-cover object-center rounded-xl lg:rounded-none shadow-lg lg:shadow-none" fetchpriority="high" src="/profile2.avif" alt="Joni Ilman Pahmi - Web Developer" />
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FEATURED PROJECTS SECTION ================= -->
+    <section id="portfolio" class="bg-[#F7F5F0] dark:bg-[#0B1220] py-20 relative overflow-hidden transition-colors duration-300">
+        
+        <!-- Ornamen latar belakang -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none" aria-hidden="true">
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-[#E8935B]/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-12 -left-24 w-80 h-80 bg-[#1B4B66]/10 dark:bg-[#7BB4D1]/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <!-- Judul bagian -->
+            <div class="text-center md:text-left mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <p class="font-mono text-xs font-semibold text-[#E8935B] tracking-wider mb-2 uppercase">// selected_works.json</p>
+                    <h2 class="font-bevan text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0F172A] dark:text-white tracking-tight">
+                        Karya <span class="text-[#1B4B66] dark:text-[#7BB4D1]">Pilihan</span>
+                    </h2>
+                </div>
+                <a href="/portfolio" class="inline-flex items-center gap-2 text-sm font-semibold text-[#1B4B66] dark:text-[#7BB4D1] hover:text-[#E8935B] dark:hover:text-[#E8935B] transition-colors group focus-visible:outline-none">
+                    Lihat Semua Portofolio
+                    <svg class="w-4 h-4 transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
+            </div>
+
+            <!-- Grid Karya -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {featuredProjects.map((project) => (
+                    <div class="group bg-white dark:bg-slate-800/50 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-[#1B4B66]/30 dark:hover:border-[#7BB4D1]/50 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col">
+                        
+                        <!-- Thumbnail proyek -->
+                        <div class="relative overflow-hidden aspect-video border-b border-slate-100 dark:border-slate-700">
+                            <!-- Ganti URL dengan gambar proyek asli sebelum deploy, misalnya /images/project1.png. -->
+                            <img 
+                                src={project.image} 
+                                alt={project.title} 
+                                class="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+                                loading="lazy"
+                            />
+                            
+                            <!-- Overlay saat kursor diarahkan ke kartu -->
+                            <div class="absolute inset-0 bg-[#0B1220]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+                                {project.liveUrl && (
+                                    <a href={project.liveUrl} target="_blank" aria-label="Demo langsung" class="p-3 bg-[#E8935B] text-white rounded-full hover:bg-[#DB7F3F] hover:scale-110 transition-all shadow-lg">
+                                        <Icon name="lucide:external-link" class="w-5 h-5" />
+                                    </a>
+                                )}
+                                {project.githubUrl && (
+                                    <a href={project.githubUrl} target="_blank" aria-label="Kode sumber" class="p-3 bg-white text-[#0F172A] rounded-full hover:bg-slate-100 hover:scale-110 transition-all shadow-lg">
+                                        <Icon name="lucide:github" class="w-5 h-5" />
+                                    </a>
+                                )}
+                            </div>
+                        </div>
+
+                        <!-- Konten teks kartu -->
+                        <div class="p-6 flex flex-col grow">
+                            <!-- Badges Tech Stack -->
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                {project.tech.map((t) => (
+                                    <span class="px-2.5 py-1 text-[10px] font-mono font-semibold uppercase tracking-wider text-[#1B4B66] dark:text-[#7BB4D1] bg-[#1B4B66]/10 dark:bg-[#7BB4D1]/10 rounded-md">
+                                        {t}
+                                    </span>
+                                ))}
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-[#0F172A] dark:text-white mb-2 line-clamp-1">
+                                {project.title}
+                            </h3>
+                            
+                            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4 line-clamp-3">
+                                {project.description}
+                            </p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+        </div>
+    </section>
+    <!-- ================= TECH STACK SECTION ================= -->
+    <section id="stack" class="bg-white dark:bg-[#0B1220] py-20 relative overflow-hidden border-t border-slate-200 dark:border-slate-800 transition-colors duration-300">
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <!-- Judul bagian -->
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <p class="font-mono text-xs font-semibold text-[#E8935B] tracking-wider mb-2 uppercase">// tech_stack.config</p>
+                <h2 class="font-bevan text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0F172A] dark:text-white tracking-tight mb-4">
+                    Stack <span class="text-[#1B4B66] dark:text-[#7BB4D1]">Teknologi</span>
+                </h2>
+                <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Daftar alat, bahasa pemrograman, dan framework yang saya gunakan untuk membangun website serta microservices yang aman dan stabil.
+                </p>
+            </div>
+
+            <!-- Grid Kategori Stack -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 justify-center">
+                {techStackCategories.map((group) => (
+                    <div class="bg-[#F7F5F0] dark:bg-slate-800/40 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700/80 flex flex-col justify-between shadow-sm">
+                        
+                        <div>
+                            <!-- Judul Kategori -->
+                            <div class="mb-6 pb-4 border-b border-slate-200 dark:border-slate-700">
+                                <h3 class="text-lg font-bold text-[#0F172A] dark:text-white mb-1">
+                                    {group.category}
+                                </h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">
+                                    {group.description}
+                                </p>
+                            </div>
+
+                            <!-- Daftar keahlian -->
+                            <div class="flex flex-wrap gap-2.5 mb-6">
+                                {group.skills.map((skill) => (
+                                    <div class="flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 shadow-xs hover:border-[#1B4B66] dark:hover:border-[#7BB4D1] transition-all group">
+                                        <Icon name={skill.icon} class="w-4 h-4 text-[#1B4B66] dark:text-[#7BB4D1] group-hover:scale-110 transition-transform" />
+                                        <span class="text-xs font-medium text-slate-700 dark:text-slate-200">
+                                            {skill.name}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <!-- Footer kecil pada kartu -->
+                        <div class="pt-4 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between text-[11px] font-mono text-slate-400 dark:text-slate-500">
+                            <span>// status: active</span>
+                            <span class="text-[#E8935B] font-semibold">Siap untuk produksi</span>
+                        </div>
+
+                    </div>
+                ))}
+            </div>
+
+            <!-- Catatan tambahan bergaya terminal atau cuplikan kode -->
+            <div class="mt-12 p-4 rounded-xl bg-[#0F172A] border border-slate-800 text-center font-mono text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-center gap-2">
+                <span class="text-[#4C9A6A]">✔ Semua sistem berhasil dimuat.</span>
+                <span class="hidden sm:inline text-slate-600">|</span>
+                <span class="text-slate-300">Membutuhkan solusi pembuatan website dengan teknologi tersebut? <a href="#contact" class="text-[#E8935B] hover:underline">Mari diskusikan</a>.</span>
+            </div>
+
+        </div>
+    </section>
+    <section id="blog" class="bg-[#F7F5F0] dark:bg-[#0B1220] py-20 relative overflow-hidden transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <!-- Header -->
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <p class="font-mono text-xs font-semibold text-[#E8935B] tracking-wider mb-2 uppercase">// blog.json</p>
+                <h2 class="font-bevan text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0F172A] dark:text-white tracking-tight mb-4">
+                    Artikel <span class="text-[#1B4B66] dark:text-[#7BB4D1]">Terbaru</span>
+                </h2>
+                <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+                    Jelajahi pemikiran, tutorial, dan wawasan terbaru saya seputar pengembangan web, teknologi, dan pengalaman pribadi.
+                </p>
+            </div>
+
+            <!-- Filter kategori -->
+            <div class="flex flex-wrap justify-center gap-3 mb-12">
+                {kategoriBlog.map((kat, index) => (
+                    <button type="button" data-blog-filter={kat} data-active={index === 0 ? 'true' : 'false'} class="blog-filter px-5 py-2 rounded-full text-sm font-semibold border transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B4B66]">
+                        {kat}
+                    </button>
+                ))}
+            </div>
+
+            <!-- Daftar artikel -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {purwarupaArtikel.map((post) => (
+                    <article data-blog-category={post.category} class="bg-white dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
+                        
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-[#E8935B] bg-[#E8935B]/10 rounded-md">
+                                {post.category}
+                            </span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">
+                                {post.date}
+                            </span>
+                        </div>
+
+                        <a href={post.link} class="block grow focus-visible:outline-none">
+                            <h3 class="text-xl font-bold text-[#0F172A] dark:text-white mb-3 group-hover:text-[#1B4B66] dark:group-hover:text-[#7BB4D1] transition-colors line-clamp-2">
+                                {post.title}
+                            </h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-3 mb-6">
+                                {post.excerpt}
+                            </p>
+                        </a>
+
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-100 dark:border-slate-700/50">
+                            <span class="text-xs text-slate-500 dark:text-slate-400">
+                                {post.readTime}
+                            </span>
+                            <a href={post.link} class="text-sm font-semibold text-[#1B4B66] dark:text-[#7BB4D1] group-hover:text-[#E8935B] transition-colors inline-flex items-center gap-1">
+                                Baca <svg class="w-4 h-4 transform transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                            </a>
+                        </div>
+                    </article>
+                ))}
+            </div>
+
+            <p id="blog-empty" class="hidden text-center text-sm text-slate-500 dark:text-slate-400 py-8 font-mono">// Tidak ada artikel dalam kategori ini.</p>
+
+            <!-- Tombol menuju halaman utama blog -->
+            <div class="mt-12 text-center">
+                <a href="/blog" class="inline-block px-8 py-3 rounded-xl bg-white dark:bg-slate-800 text-[#1B4B66] dark:text-[#7BB4D1] font-bold border border-slate-200 dark:border-slate-700 hover:border-[#1B4B66] hover:shadow-md transition-all">
+                    Lihat Semua Artikel
+                </a>
+            </div>
+
+        </div>
+    </section>
+    <!-- ================= CONTACT CTA SECTION ================= -->
+    <section id="contact" class="bg-white dark:bg-[#0F172A] py-20 relative overflow-hidden border-t border-slate-200 dark:border-slate-800 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="relative overflow-hidden rounded-2xl bg-[#0F172A] dark:bg-slate-800/60 border border-slate-800 dark:border-slate-700 px-6 py-14 sm:px-12 sm:py-16 text-center shadow-xl">
+                <div class="blueprint-grid-dark absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+                <div class="relative">
+                    <p class="font-mono text-xs font-semibold text-[#E8935B] tracking-wider mb-3">$ ./hire-joni.sh --start-project</p>
+                    <h2 class="font-bevan text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
+                        Punya Ide Proyek? <span class="text-[#E8935B]">Mari Wujudkan.</span>
+                    </h2>
+                    <p class="text-sm sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed mb-8">
+                        Ceritakan kebutuhan website atau aplikasi Anda. Saya membantu mulai dari perencanaan hingga deployment dan biasanya membalas dalam waktu kurang dari 1 x 24 jam.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href={contactMailto} class="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-base font-semibold text-[#0F172A] bg-[#E8935B] hover:bg-[#DB7F3F] rounded-lg transition-all shadow-md shadow-[#E8935B]/30 group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                            <Icon name="lucide:mail" class="w-5 h-5" />
+                            <span>Kirim Email</span>
+                        </a>
+                        <a href="#portfolio" class="inline-flex items-center justify-center px-7 py-3.5 text-base font-semibold text-white bg-transparent border-2 border-white/25 hover:border-white/60 rounded-lg transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                            Lihat Karya Dulu
+                        </a>
+                    </div>
+                    <p class="mt-6 font-mono text-xs text-slate-400">// Terbuka untuk kerja jarak jauh · {contactEmail}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</Layout>
+
+<style>
+    /* Pertahankan styling dan gunakan scrollbar-hide untuk statusbar di perangkat seluler. */
+    /* Tombol filter blog: status aktif dikendalikan oleh atribut data-active melalui JavaScript. */
+    .blog-filter {
+        background: transparent;
+        color: #475569;
+        border-color: #cbd5e1;
+    }
+    :global(.dark) .blog-filter {
+        color: #cbd5e1;
+        border-color: #334155;
+    }
+    .blog-filter:hover {
+        border-color: #e8935b;
+        color: #e8935b;
+    }
+    .blog-filter[data-active="true"] {
+        background: #1b4b66;
+        border-color: #1b4b66;
+        color: #ffffff;
+    }
+    .blog-filter[data-active="true"]:hover {
+        color: #ffffff;
+    }
+    :global(.dark) .blog-filter[data-active="true"] {
+        background: #7bb4d1;
+        border-color: #7bb4d1;
+        color: #0b1220;
+    }
+    :global(.dark) .blog-filter[data-active="true"]:hover {
+        color: #0b1220;
+    }
+
+    /* Tekstur grid untuk kartu kontak berwarna gelap. */
+    .blueprint-grid-dark {
+        background-image:
+            linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        background-size: 32px 32px;
+        -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 85%);
+        mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 85%);
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .blueprint-grid {
+        background-image:
+            linear-gradient(to right, rgba(27, 75, 102, 0.06) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(27, 75, 102, 0.06) 1px, transparent 1px);
+        background-size: 32px 32px;
+        -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 40%, transparent 90%);
+        mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 40%, transparent 90%);
+    }
+    :global(.dark) .blueprint-grid {
+        background-image:
+            linear-gradient(to right, rgba(123, 180, 209, 0.08) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(123, 180, 209, 0.08) 1px, transparent 1px);
+    }
+
+    .terminal-prompt {
+        background: #0f172a;
+        border: 1px solid rgba(123, 180, 209, 0.25);
+        box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.25);
+    }
+    .cursor-blink {
+        animation: blink 1.1s steps(1) infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .cursor-blink { animation: none; }
+    }
+    @keyframes blink {
+        50% { opacity: 0; }
+    }
+
+    .statusbar {
+        background: #1b4b66;
+        color: #e9f1f5;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .statusbar-item {
+        border-right: 1px solid rgba(255, 255, 255, 0.12);
+        transition: background 0.15s ease;
+    }
+    .statusbar-item:last-child {
+        border-right: none;
+    }
+    .statusbar-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    .photo-frame {
+        position: relative;
+    }
+    .photo-frame::before,
+    .photo-frame::after {
+        content: '';
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        border-color: #e8935b;
+        z-index: 10;
+        pointer-events: none;
+    }
+    .photo-frame::before {
+        top: 16px;
+        left: 16px;
+        border-top: 3px solid;
+        border-left: 3px solid;
+    }
+    .photo-frame::after {
+        bottom: 16px;
+        right: 16px;
+        border-bottom: 3px solid;
+        border-right: 3px solid;
+    }
+</style>
+
+<script>
+    // Filter artikel blog berdasarkan kategori.
+    document.addEventListener('DOMContentLoaded', () => {
+        const buttons = document.querySelectorAll('[data-blog-filter]');
+        const cards = document.querySelectorAll('[data-blog-category]');
+        const emptyMsg = document.getElementById('blog-empty');
+        if (!buttons.length || !cards.length) return;
+        buttons.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const filter = btn.getAttribute('data-blog-filter');
+                buttons.forEach((b) => b.setAttribute('data-active', String(b === btn)));
+                let visible = 0;
+                cards.forEach((card) => {
+                    const show = filter === 'Semua' || card.getAttribute('data-blog-category') === filter;
+                    card.classList.toggle('hidden', !show);
+                    if (show) visible++;
+                });
+                emptyMsg?.classList.toggle('hidden', visible > 0);
+            });
+        });
+    });
+</script>

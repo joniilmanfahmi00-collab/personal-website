@@ -1,0 +1,473 @@
+---
+import '../styles/global.css';
+import { Icon } from 'astro-icon/components';
+import Layout from '../layouts/MainLayouts.astro';
+
+/* ============================================================
+ * META
+ * ============================================================ */
+const siteTitle = 'Hubungi Saya - Jasa Pembuatan Website | Joni Ilman Pahmi';
+const siteDescription =
+    'Butuh web developer freelance? Jasa pembuatan company profile, toko online, dan web app custom. Konsultasi gratis, respons kurang dari 24 jam.';
+
+/* ============================================================
+ * KONTAK
+ * ============================================================ */
+// TODO: Ganti dengan nomor WhatsApp dan email asli sebelum deploy.
+const whatsappNumber = '628814571398'; // Format: kode negara tanpa tanda + atau spasi, contoh: 62812xxxxxxx.
+const contactEmail = 'halo@joniilmanpahmi.online';
+
+const waLink = (pesan: string) => `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(pesan)}`;
+const waDefault = waLink('Halo Joni, saya ingin berdiskusi tentang proyek website.');
+const contactMailto = `mailto:${contactEmail}?subject=${encodeURIComponent('Halo Joni - Proyek Website')}`;
+
+/* ============================================================
+ * DATA
+ * ============================================================ */
+// TODO: Sesuaikan nama paket, fitur, dan harga dengan layanan yang ditawarkan.
+const packages = [
+    {
+        icon: 'lucide:building-2',
+        name: 'Website Company Profile',
+        price: 'Rp 1,5 jt',
+        priceNote: 'mulai dari',
+        description: 'Cocok untuk usaha, kantor, atau personal branding.',
+        features: [
+            '5–7 halaman (Beranda, Tentang, Layanan, Galeri, Kontak)',
+            'Responsif + SEO dasar',
+            'Formulir kontak + tombol WhatsApp',
+            'Gratis setup domain & hosting*',
+        ],
+        cta: waLink('Halo Joni, saya membutuhkan Website Company Profile.'),
+        highlight: false,
+    },
+    {
+        icon: 'lucide:shopping-cart',
+        name: 'Toko Online',
+        price: 'Rp 3 jt',
+        priceNote: 'mulai dari',
+        description: 'Mulai berjualan online dengan mudah, dari katalog hingga checkout.',
+        features: [
+            'Katalog produk + keranjang belanja',
+            'Checkout via WhatsApp otomatis',
+            'Pembayaran QRIS / transfer',
+            'Dashboard admin sederhana',
+        ],
+        cta: waLink('Halo Joni, saya membutuhkan toko online.'),
+        highlight: true,
+    },
+    {
+        icon: 'lucide:layers',
+        name: 'Web App Custom',
+        price: 'Diskusi',
+        priceNote: 'sesuai kebutuhan',
+        description: 'Sistem khusus untuk dashboard, API, integrasi, dan perangkat kerja internal.',
+        features: [
+            'Fitur disesuaikan dengan kebutuhan',
+            'Database + API + user roles',
+            'Dokumentasi + pelatihan singkat',
+            'Dukungan setelah peluncuran',
+        ],
+        cta: waLink('Halo Joni, saya ingin mendiskusikan kebutuhan web app custom.'),
+        highlight: false,
+    },
+];
+
+const steps = [
+    {
+        icon: 'lucide:messages-square',
+        title: 'Konsultasi Gratis',
+        description: 'Ceritakan kebutuhan melalui WhatsApp atau email. Tanpa komitmen dan tanpa biaya.',
+    },
+    {
+        icon: 'lucide:file-text',
+        title: 'Proposal & Kesepakatan',
+        description: 'Ruang lingkup, jadwal, dan harga dijelaskan secara transparan sejak awal. Setelah sepakat, uang muka 50%.',
+    },
+    {
+        icon: 'lucide:code',
+        title: 'Pengerjaan',
+        description: 'Pengerjaan disertai pembaruan progres secara berkala. Gratis 2 kali revisi besar.',
+    },
+    {
+        icon: 'lucide:rocket',
+        title: 'Peluncuran & Garansi',
+        description: 'Website siap digunakan + garansi bug 30 hari + panduan pengelolaan.',
+    },
+];
+
+// DRAF — contoh testimoni ini hanya placeholder.
+// WAJIB diganti dengan testimoni asli dan izin dari pemilik testimoni sebelum website ditayangkan.
+const testimonials = [
+    {
+        quote:
+            'Website percetakan saya dikerjakan cepat dan hasilnya rapi. Sekarang orderan dari online naik, landing page merchandise-nya juga laris. Komunikasinya enak, recommended!',
+        name: 'Asep Wawan',
+        role: 'Owner Usaha Percetakan',
+        project: 'Website Percetakan + Landing Page Merch',
+        initials: 'AW',
+        accent: 'bg-[#E8935B]',
+    },
+    {
+        quote:
+            'Sudah beberapa kali bikin website dan tools di sini, nggak pernah kecewa. Tools terakhir untuk monetisasi ClickAdu dan Adsterra jalan stabil sampai sekarang. Pokoknya langganan tetap!',
+        name: 'Surdi',
+        role: 'Pebisnis Online',
+        project: 'Website + Tools Monetisasi Iklan',
+        initials: 'S',
+        accent: 'bg-[#1B4B66] dark:bg-[#7BB4D1]',
+    },
+];
+
+// TODO: Sesuaikan jawaban FAQ (pembayaran, revisi, dan garansi) dengan kebijakan layanan.
+const faqs = [
+    {
+        q: 'Berapa lama pengerjaannya?',
+        a: 'Company profile biasanya 1–2 minggu, toko online 2–4 minggu. Web app custom tergantung kompleksitas fitur — estimasi pastinya dibahas di proposal sebelum deal.',
+    },
+    {
+        q: 'Bagaimana sistem pembayarannya?',
+        a: 'Pembayaran standar menggunakan uang muka 50% setelah kesepakatan, lalu pelunasan 50% setelah website diluncurkan dan hasilnya disetujui klien. Metode pembayaran fleksibel: transfer bank, QRIS, atau dompet digital.',
+    },
+    {
+        q: 'Bisa revisi berapa kali?',
+        a: 'Gratis 2 kali revisi besar selama pengerjaan, serta revisi kecil untuk teks, warna, gambar, dan ikon. Setelah peluncuran, tersedia garansi bug selama 30 hari.',
+    },
+    {
+        q: 'Bagaimana dengan domain dan hosting?',
+        a: 'Saya dapat membantu memilih dan menyiapkan domain serta hosting (biayanya di luar jasa pengembangan). Kamu juga bisa menggunakan layanan hosting yang sudah dimiliki. Saya akan memandu prosesnya hingga website siap digunakan.',
+    },
+    {
+        q: 'Ada jasa maintenance?',
+        a: 'Tersedia paket bulanan atau tahunan yang mencakup pembaruan rutin, pencadangan, pemantauan, dan perbaikan kecil. Cocok untuk toko online atau web app yang aktif setiap hari.',
+    },
+];
+---
+
+<Layout title={siteTitle} description={siteDescription}>
+
+    <!-- ================= HERO ================= -->
+    <section class="relative overflow-hidden bg-[#F7F5F0] transition-colors duration-300 dark:bg-[#0B1220]">
+        <div class="blueprint-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+
+        <div class="relative z-10 mx-auto max-w-7xl px-4 pb-16 pt-12 sm:px-6 sm:pb-20 sm:pt-16 lg:px-8">
+
+            <!-- Breadcrumb -->
+            <nav aria-label="Breadcrumb" class="mb-8 font-mono text-xs text-slate-500 dark:text-slate-400">
+                <ol class="flex items-center gap-2">
+                    <li><a href="/" class="transition-colors hover:text-[#E8935B]">Beranda</a></li>
+                    <li aria-hidden="true" class="text-slate-400">/</li>
+                    <li aria-current="page" class="font-semibold text-[#1B4B66] dark:text-[#7BB4D1]">Hubungi Saya</li>
+                </ol>
+            </nav>
+
+            <div class="max-w-3xl">
+                <!-- Status ketersediaan -->
+                <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 shadow-sm dark:border-slate-700 dark:bg-slate-800/60">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#4C9A6A] opacity-60 motion-reduce:animate-none"></span>
+                        <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#4C9A6A]"></span>
+                    </span>
+                    <span class="font-mono text-xs font-semibold text-slate-600 dark:text-slate-300">Tersedia untuk proyek</span>
+                </div>
+
+                <p class="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-[#E8935B]">$ ./hire-joni.sh --open</p>
+                <h1 class="font-bevan text-4xl font-extrabold leading-tight tracking-tight text-[#0F172A] sm:text-5xl md:text-6xl dark:text-white">
+                    Butuh Web Developer? <span class="text-[#1B4B66] dark:text-[#7BB4D1]">Mari Kita Wujudkan.</span>
+                </h1>
+                <p class="mt-5 max-w-2xl font-sans text-base leading-relaxed text-slate-600 sm:text-lg dark:text-slate-400">
+                    Saya membantu bisnis dan individu membangun website yang cepat, aman, dan mudah dikelola—mulai dari konsultasi gratis hingga website siap digunakan. Tanpa drama dan tanpa biaya tersembunyi.
+                </p>
+
+                <div class="mt-8 flex flex-col gap-4 sm:flex-row">
+                    <a
+                        href={waDefault}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#E8935B] px-7 py-3.5 text-base font-semibold text-[#0F172A] shadow-md shadow-[#E8935B]/30 transition-all hover:bg-[#DB7F3F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B4B66]"
+                    >
+                        <Icon name="lucide:message-circle" class="h-5 w-5" />
+                        <span>Chat WhatsApp</span>
+                    </a>
+                    <a
+                        href={contactMailto}
+                        class="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-[#1B4B66]/30 bg-transparent px-7 py-3.5 text-base font-semibold text-[#1B4B66] transition-all hover:border-[#1B4B66] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B4B66] dark:border-[#7BB4D1]/30 dark:text-[#7BB4D1] dark:hover:border-[#7BB4D1]"
+                    >
+                        <Icon name="lucide:mail" class="h-5 w-5" />
+                        <span>Kirim Email</span>
+                    </a>
+                </div>
+
+                <!-- Trust chips -->
+                <div class="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs text-slate-500 dark:text-slate-400">
+                    <span class="inline-flex items-center gap-1.5">
+                        <Icon name="lucide:users" class="h-4 w-4 text-[#E8935B]" /> 50+ klien
+                    </span>
+                    <span class="inline-flex items-center gap-1.5">
+                        <Icon name="lucide:clock" class="h-4 w-4 text-[#E8935B]" /> Respons &lt; 24 jam
+                    </span>
+                    <span class="inline-flex items-center gap-1.5">
+                        <Icon name="lucide:shield-check" class="h-4 w-4 text-[#E8935B]" /> Garansi bug 30 hari
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= PAKET LAYANAN ================= -->
+    <section class="relative overflow-hidden border-t border-slate-200 bg-white py-20 transition-colors duration-300 dark:border-slate-800 dark:bg-[#0F172A]">
+        <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto mb-12 max-w-2xl text-center">
+                <p class="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-[#E8935B]">// pricing.json</p>
+                <h2 class="font-bevan mb-4 text-3xl font-extrabold tracking-tight text-[#0F172A] sm:text-4xl md:text-5xl dark:text-white">
+                    Paket <span class="text-[#1B4B66] dark:text-[#7BB4D1]">Layanan</span>
+                </h2>
+                <p class="text-sm leading-relaxed text-slate-600 sm:text-base dark:text-slate-400">
+                    Harga transparan sejak awal—tanpa biaya tersembunyi. Punya kebutuhan khusus? Mari diskusikan.
+                </p>
+            </div>
+
+            <!-- Kartu harga: scroll horizontal (snap) di mobile/tablet -->
+            <div class="no-scrollbar -mx-4 flex snap-x snap-mandatory items-stretch gap-6 overflow-x-auto px-4 pb-2 pt-3 sm:-mx-6 sm:px-6">
+                {packages.map((pkg) => (
+                    <div
+                        class={`relative flex w-[85%] shrink-0 snap-center flex-col rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-8 md:w-100 ${
+                            pkg.highlight
+                                ? 'border-[#E8935B]/50 bg-[#0F172A] shadow-lg shadow-[#E8935B]/10 dark:bg-slate-800/70'
+                                : 'border-slate-200 bg-[#F7F5F0] shadow-sm dark:border-slate-700 dark:bg-slate-800/40'
+                        }`}
+                    >
+                        {pkg.highlight && (
+                            <span class="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[#E8935B] px-4 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#0F172A]">
+                                Paling Dipilih
+                            </span>
+                        )}
+
+                        <div
+                            class={`mb-5 flex h-12 w-12 items-center justify-center rounded-xl ${
+                                pkg.highlight ? 'bg-[#E8935B]/15' : 'bg-[#1B4B66]/10 dark:bg-[#7BB4D1]/10'
+                            }`}
+                        >
+                            <Icon
+                                name={pkg.icon}
+                                class={`h-6 w-6 ${pkg.highlight ? 'text-[#E8935B]' : 'text-[#1B4B66] dark:text-[#7BB4D1]'}`}
+                            />
+                        </div>
+
+                        <h3 class={`mb-1 text-xl font-bold ${pkg.highlight ? 'text-white' : 'text-[#0F172A] dark:text-white'}`}>
+                            {pkg.name}
+                        </h3>
+
+                        <p class={`mb-4 text-xs ${pkg.highlight ? 'text-slate-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                            {pkg.description}
+                        </p>
+
+                        <p class="mb-6">
+                            <span
+                                class={`block font-mono text-[11px] uppercase tracking-wider ${
+                                    pkg.highlight ? 'text-slate-400' : 'text-slate-400 dark:text-slate-500'
+                                }`}
+                            >
+                                {pkg.priceNote}
+                            </span>
+                            <span class={`font-bevan text-3xl ${pkg.highlight ? 'text-[#E8935B]' : 'text-[#1B4B66] dark:text-[#7BB4D1]'}`}>
+                                {pkg.price}
+                            </span>
+                        </p>
+
+                        <ul class="mb-8 grow space-y-2.5">
+                            {pkg.features.map((feat) => (
+                                <li
+                                    class={`flex items-start gap-2.5 text-sm ${
+                                        pkg.highlight ? 'text-slate-300' : 'text-slate-600 dark:text-slate-300'
+                                    }`}
+                                >
+                                    <Icon name="lucide:check" class="mt-0.5 h-4 w-4 shrink-0 text-[#4C9A6A]" />
+                                    <span>{feat}</span>
+                                </li>
+                            ))}
+                        </ul>
+
+                        <a
+                            href={pkg.cta}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class={`inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-semibold transition-all focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                                pkg.highlight
+                                    ? 'bg-[#E8935B] text-[#0F172A] hover:bg-[#DB7F3F] focus-visible:outline-white'
+                                    : 'border-2 border-[#1B4B66]/30 text-[#1B4B66] hover:border-[#1B4B66] focus-visible:outline-[#1B4B66] dark:border-[#7BB4D1]/30 dark:text-[#7BB4D1] dark:hover:border-[#7BB4D1]'
+                            }`}
+                        >
+                            Pilih Paket Ini
+                        </a>
+                    </div>
+                ))}
+            </div>
+
+            <p class="mt-8 text-center font-mono text-xs text-slate-400 dark:text-slate-500">
+                * Biaya domain &amp; hosting di luar jasa development.
+            </p>
+        </div>
+    </section>
+
+    <!-- ================= TESTIMONI ================= -->
+    <section class="relative overflow-hidden border-t border-slate-200 bg-white py-20 transition-colors duration-300 dark:border-slate-800 dark:bg-[#0F172A]">
+        <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto mb-12 max-w-2xl text-center">
+                <p class="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-[#E8935B]">// testimonials.log</p>
+                <h2 class="font-bevan mb-4 text-3xl font-extrabold tracking-tight text-[#0F172A] sm:text-4xl md:text-5xl dark:text-white">
+                    Kata <span class="text-[#1B4B66] dark:text-[#7BB4D1]">Mereka</span>
+                </h2>
+                <p class="text-sm leading-relaxed text-slate-600 sm:text-base dark:text-slate-400">
+                    Cerita dari klien yang telah bekerja sama dengan kami.
+                </p>
+            </div>
+
+            <div class="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
+                {testimonials.map((t) => (
+                    <figure class="flex flex-col rounded-2xl border border-slate-200 bg-[#F7F5F0] p-6 shadow-sm sm:p-8 dark:border-slate-700 dark:bg-slate-800/40">
+                        <div class="mb-4 flex gap-1" role="img" aria-label="Rating 5 dari 5">
+                            {[0, 1, 2, 3, 4].map(() => (
+                                <Icon name="lucide:star" class="h-4 w-4 fill-current text-[#E8935B]" />
+                            ))}
+                        </div>
+                        <blockquote class="mb-6 grow text-sm leading-relaxed text-slate-600 sm:text-base dark:text-slate-300">
+                            “{t.quote}”
+                        </blockquote>
+                        <figcaption class="flex items-center gap-4 border-t border-slate-200 pt-5 dark:border-slate-700">
+                            <span
+                                class={`font-bevan flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-lg text-white ${t.accent}`}
+                                aria-hidden="true"
+                            >
+                                {t.initials}
+                            </span>
+                            <span>
+                                <span class="block text-sm font-bold text-[#0F172A] dark:text-white">{t.name}</span>
+                                <span class="block text-xs text-slate-500 dark:text-slate-400">{t.role}</span>
+                                <span class="mt-1 block font-mono text-[11px] text-[#1B4B66] dark:text-[#7BB4D1]">{t.project}</span>
+                            </span>
+                        </figcaption>
+                    </figure>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= FAQ ================= -->
+    <section class="relative overflow-hidden bg-[#F7F5F0] py-20 transition-colors duration-300 dark:bg-[#0B1220]">
+        <div class="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+            <div class="mb-12 text-center">
+                <p class="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-[#E8935B]">// faq.md</p>
+                <h2 class="font-bevan mb-4 text-3xl font-extrabold tracking-tight text-[#0F172A] sm:text-4xl md:text-5xl dark:text-white">
+                    Sering <span class="text-[#1B4B66] dark:text-[#7BB4D1]">Ditanyakan</span>
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2">
+                {faqs.map((faq) => (
+                    <details class="faq-item group h-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800/50">
+                        <summary class="flex min-h-20 items-center justify-between gap-4 px-6 py-6 text-left focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#1B4B66]">
+                            <span class="text-sm font-bold leading-relaxed text-[#0F172A] sm:text-base dark:text-white">{faq.q}</span>
+                            <span class="faq-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1B4B66]/10 dark:bg-[#7BB4D1]/10">
+                                <Icon name="lucide:plus" class="h-4 w-4 text-[#1B4B66] dark:text-[#7BB4D1]" />
+                            </span>
+                        </summary>
+                        <p class="px-6 pb-7 text-sm leading-relaxed text-slate-600 dark:text-slate-400">{faq.a}</p>
+                    </details>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= CTA PENUTUP ================= -->
+    <section class="relative overflow-hidden border-t border-slate-200 bg-white py-20 transition-colors duration-300 dark:border-slate-800 dark:bg-[#0F172A]">
+        <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="relative overflow-hidden rounded-2xl border border-slate-800 bg-[#0F172A] px-6 py-14 text-center shadow-xl sm:px-12 sm:py-16 dark:border-slate-700 dark:bg-slate-800/60">
+                <div class="blueprint-grid-dark pointer-events-none absolute inset-0" aria-hidden="true"></div>
+                <div class="relative">
+                    <p class="mb-3 font-mono text-xs font-semibold tracking-wider text-[#E8935B]">$ ./hire-joni.sh --deal</p>
+                    <h2 class="font-bevan mb-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl">
+                        Siap Memulai <span class="text-[#E8935B]">Proyek?</span>
+                    </h2>
+                    <p class="mx-auto mb-8 max-w-xl text-sm leading-relaxed text-slate-300 sm:text-base">
+                        Konsultasi gratis, tanpa komitmen. Ceritakan kebutuhan Anda—harga dan jadwal akan dibahas secara transparan sejak awal.
+                    </p>
+                    <div class="flex flex-col justify-center gap-4 sm:flex-row">
+                        <a
+                            href={waDefault}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#E8935B] px-7 py-3.5 text-base font-semibold text-[#0F172A] shadow-md shadow-[#E8935B]/30 transition-all hover:bg-[#DB7F3F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                        >
+                            <Icon name="lucide:message-circle" class="h-5 w-5" />
+                            <span>Chat WhatsApp</span>
+                        </a>
+                        <a
+                            href={contactMailto}
+                            class="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-white/25 bg-transparent px-7 py-3.5 text-base font-semibold text-white transition-all hover:border-white/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                        >
+                            <Icon name="lucide:mail" class="h-5 w-5" />
+                            <span>Kirim Email</span>
+                        </a>
+                    </div>
+                    <p class="mt-6 font-mono text-xs text-slate-400">// Biasanya membalas dalam waktu kurang dari 24 jam</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</Layout>
+
+<style>
+    /* ---------- Background grid (hero & CTA) ---------- */
+    .blueprint-grid {
+        background-image:
+            linear-gradient(to right, rgba(27, 75, 102, 0.06) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(27, 75, 102, 0.06) 1px, transparent 1px);
+        background-size: 32px 32px;
+        -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 40%, transparent 90%);
+        mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 40%, transparent 90%);
+    }
+    :global(.dark) .blueprint-grid {
+        background-image:
+            linear-gradient(to right, rgba(123, 180, 209, 0.08) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(123, 180, 209, 0.08) 1px, transparent 1px);
+    }
+
+    .blueprint-grid-dark {
+        background-image:
+            linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        background-size: 32px 32px;
+        -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 85%);
+        mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, black 30%, transparent 85%);
+    }
+
+    /* ---------- Scroll horizontal tanpa scrollbar (kartu harga) ---------- */
+    .no-scrollbar {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* ---------- FAQ accordion: ikon berputar saat panel dibuka ---------- */
+    .faq-item summary {
+        list-style: none;
+        cursor: pointer;
+    }
+    .faq-item summary::-webkit-details-marker {
+        display: none;
+    }
+    .faq-item .faq-icon {
+        transition: transform 0.2s ease;
+    }
+    .faq-item[open] .faq-icon {
+        transform: rotate(45deg);
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .faq-item .faq-icon {
+            transition: none;
+        }
+    }
+</style>
