@@ -2,16 +2,17 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro'; // Upami aya navigasi di luhur
 import Footer from '../components/Footer.astro';
-
-//import
+import { ClientRouter } from 'astro:transitions';
 
 // Nampi data judul sareng deskripsi ti halaman luar
-const { title, description } = Astro.props;
+const { title, description, robots } = Astro.props;
 ---
 
 <html lang="id">
   <head>
     <BaseHead title={title} description={description} />
+    {robots && <meta name="robots" content={robots} />}
+    <ClientRouter />
   </head>
   <body class="bg-[#F7F5F0] dark:bg-[#0B1220] font-sans text-slate-900 dark:text-slate-100 antialiased transition-colors duration-300">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-60 focus:px-4 focus:py-2 focus:bg-[#1B4B66] focus:text-white focus:rounded-lg focus:text-sm focus:font-semibold">Luncat ka eusi utama</a>

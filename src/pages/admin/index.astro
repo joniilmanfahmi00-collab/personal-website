@@ -1,0 +1,158 @@
+---
+import { getCollection } from 'astro:content';
+import AdminLayout from '../../layouts/AdminLayout.astro';
+
+export const prerender = false;
+
+const [blogEntries, portfolioEntries, certificateEntries] = await Promise.all([
+  getCollection('blog'),
+  getCollection('portfolio'),
+  getCollection('certificates'),
+]);
+
+const publishedBlogEntries = blogEntries.filter((entry) => !entry.data.draft);
+const draftBlogEntries = blogEntries.filter((entry) => entry.data.draft);
+const publishedPortfolioEntries = portfolioEntries.filter((entry) => !entry.data.draft);
+const publishedCertificates = certificateEntries.filter((entry) => !entry.data.draft);
+
+const recentEntries = [
+  ...blogEntries.map((entry) => ({
+    title: entry.data.title,
+    type: 'Tulisan',
+    date: entry.data.updatedDate ?? entry.data.pubDate,
+    draft: entry.data.draft ?? false,
+    href: `/keystatic/branch/main/collection/blog/item/${encodeURIComponent(entry.id)}`,
+  })),
+  ...portfolioEntries.map((entry) => ({
+    title: entry.data.title,
+    type: 'Portofolio',
+    date: entry.data.pubDate ?? new Date(0),
+    draft: entry.data.draft ?? false,
+    href: `/keystatic/branch/main/collection/portfolio/item/${encodeURIComponent(entry.id)}`,
+  })),
+  ...certificateEntries.map((entry) => {
+    const year = Number.parseInt(entry.data.year ?? '', 10);
+    return {
+      title: entry.data.title,
+      type: 'Sertifikat',
+      date: Number.isFinite(year) && year > 0 ? new Date(year, 0, 1) : new Date(0),
+      draft: entry.data.draft ?? false,
+      href: `/keystatic/branch/main/collection/certificates/item/${encodeURIComponent(entry.id)}`,
+    };
+  }),
+]
+  .sort((a, b) => b.date.getTime() - a.date.getTime())
+  .slice(0, 6);
+
+const dateLabel = (date: Date) => date.getTime() === 0
+  ? 'Can aya tanggal'
+  : new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
+---
+
+<AdminLayout title="Dasbor" current="dashboard" description="Ringkesan eusi jeung tautan pangaturan Joni Website.">
+  <section class="mb-8 flex flex-col justify-between gap-5 rounded-3xl bg-[#142337] p-6 text-white shadow-sm sm:p-8 lg:flex-row lg:items-end">
+    <div>
+      <p class="mb-3 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-[#E8935B]">Joni Website / Panel Admin</p>
+      <h1 class="font-bevan text-2xl leading-tight sm:text-3xl">Wilujeng sumping deui</h1>
+      <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-300">Atur tulisan, portofolio, biodata, SEO, jeung komentar tina hiji tempat.</p>
+    </div>
+    <div class="flex flex-wrap gap-3">
+      <a href="/" class="inline-flex items-center justify-center rounded-xl border border-white/20 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-white/10">Tingali situs</a>
+      <a href="/keystatic" class="inline-flex items-center justify-center rounded-xl bg-[#E8935B] px-4 py-2.5 text-sm font-bold text-[#142337] transition hover:bg-[#F0A978]">Buka Keystatic <span class="ml-2" aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+  <section aria-label="Ringkesan eusi" class="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Tulisan diterbitkeun</p>
+      <p class="mt-3 font-bevan text-3xl text-[#1B4B66] dark:text-[#7BB4D1]">{publishedBlogEntries.length}</p>
+      <a href="/keystatic/branch/main/collection/blog" class="mt-4 inline-flex text-sm font-bold text-[#1B4B66] hover:text-[#E8935B] dark:text-[#7BB4D1]">Atur tulisan <span class="ml-1" aria-hidden="true">→</span></a>
+    </article>
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Artikel draft</p>
+      <p class="mt-3 font-bevan text-3xl text-[#E8935B]">{draftBlogEntries.length}</p>
+      <a href="/keystatic/branch/main/collection/blog" class="mt-4 inline-flex text-sm font-bold text-[#1B4B66] hover:text-[#E8935B] dark:text-[#7BB4D1]">Pariksa draft <span class="ml-1" aria-hidden="true">→</span></a>
+    </article>
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Showcase diterbitkeun</p>
+      <p class="mt-3 font-bevan text-3xl text-[#1B4B66] dark:text-[#7BB4D1]">{publishedPortfolioEntries.length}</p>
+      <a href="/keystatic/branch/main/collection/portfolio" class="mt-4 inline-flex text-sm font-bold text-[#1B4B66] hover:text-[#E8935B] dark:text-[#7BB4D1]">Atur portofolio <span class="ml-1" aria-hidden="true">→</span></a>
+    </article>
+
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <p class="text-sm font-semibold text-slate-500 dark:text-slate-400">Sertifikat diterbitkeun</p>
+      <p class="mt-3 font-bevan text-3xl text-[#1B4B66] dark:text-[#7BB4D1]">{publishedCertificates.length}</p>
+      <a href="/keystatic/branch/main/collection/certificates" class="mt-4 inline-flex text-sm font-bold text-[#1B4B66] hover:text-[#E8935B] dark:text-[#7BB4D1]">Atur sertifikat <span class="ml-1" aria-hidden="true">→</span></a>
+    </article>
+  </section>
+
+  <div class="grid items-start gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(18rem,0.8fr)]">
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-6">
+        <div>
+          <h2 class="font-bevan text-lg">Eusi panganyarna</h2>
+          <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Diurutkeun dumasar tanggal publikasi atawa update.</p>
+        </div>
+        <a href="/keystatic" class="text-sm font-bold text-[#1B4B66] hover:text-[#E8935B] dark:text-[#7BB4D1]">Kabéh eusi <span aria-hidden="true">→</span></a>
+      </div>
+
+      {recentEntries.length > 0 ? (
+        <ul class="divide-y divide-slate-100 dark:divide-slate-800">
+          {recentEntries.map((entry) => (
+            <li>
+              <a href={entry.href} class="group flex flex-col gap-3 px-5 py-4 transition hover:bg-slate-50 dark:hover:bg-slate-800/60 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <span class="min-w-0">
+                  <span class="block truncate text-sm font-bold">{entry.title}</span>
+                  <span class="mt-1 block text-xs text-slate-500 dark:text-slate-400">{entry.type} <span aria-hidden="true">·</span> {dateLabel(entry.date)}</span>
+                </span>
+                <span class="flex shrink-0 items-center gap-3">
+                  <span class:list={[
+                  'w-fit shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold',
+                  entry.draft
+                    ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-200'
+                    : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-200',
+                  ]}>{entry.draft ? 'Draft' : 'Diterbitkeun'}</span>
+                  <span class="hidden text-xs font-bold text-[#1B4B66] group-hover:text-[#E8935B] dark:text-[#7BB4D1] sm:inline">Edit / hapus</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">Can aya tulisan atawa showcase.</p>
+      )}
+    </section>
+
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:p-6">
+      <div class="mb-5">
+        <p class="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[#E8935B]">Aksi gancang</p>
+        <h2 class="mt-2 font-bevan text-lg">Mimitian ti dieu</h2>
+      </div>
+      <div class="space-y-3">
+        <a href="/keystatic/branch/main/collection/blog/create" class="group flex items-start gap-3 rounded-xl border border-slate-200 p-3.5 transition hover:border-[#1B4B66]/40 hover:bg-[#1B4B66]/5 dark:border-slate-700 dark:hover:bg-white/5">
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#1B4B66]/10 font-bold text-[#1B4B66] dark:text-[#7BB4D1]">+</span>
+          <span><span class="block text-sm font-bold">Tulis artikel anyar</span><span class="mt-1 block text-xs text-slate-500 dark:text-slate-400">Tambah eusi blog</span></span>
+        </a>
+        <a href="/keystatic/branch/main/collection/portfolio/create" class="group flex items-start gap-3 rounded-xl border border-slate-200 p-3.5 transition hover:border-[#1B4B66]/40 hover:bg-[#1B4B66]/5 dark:border-slate-700 dark:hover:bg-white/5">
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#E8935B]/15 font-bold text-[#A64F18] dark:text-[#F4B184]">+</span>
+          <span><span class="block text-sm font-bold">Tambah showcase</span><span class="mt-1 block text-xs text-slate-500 dark:text-slate-400">Pintonkeun proyék anyar</span></span>
+        </a>
+        <a href="/keystatic/branch/main/collection/certificates/create" class="group flex items-start gap-3 rounded-xl border border-slate-200 p-3.5 transition hover:border-[#1B4B66]/40 hover:bg-[#1B4B66]/5 dark:border-slate-700 dark:hover:bg-white/5">
+          <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-200">+</span>
+          <span><span class="block text-sm font-bold">Tambah sertifikat</span><span class="mt-1 block text-xs text-slate-500 dark:text-slate-400">Simpen kredensial anyar</span></span>
+        </a>
+      </div>
+
+      <div class="mt-6 border-t border-slate-100 pt-5 dark:border-slate-800">
+        <h3 class="text-sm font-bold">Profil jeung setélan</h3>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <a href="/keystatic/branch/main/singleton/bio" class="rounded-lg bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700">Biodata</a>
+          <a href="/keystatic/branch/main/singleton/seoSettings" class="rounded-lg bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700">SEO</a>
+          <a href="/admin/komentar" class="rounded-lg bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700">Komentar</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</AdminLayout>

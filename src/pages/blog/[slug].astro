@@ -22,9 +22,38 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
-const postSlug = post.id.replace(/\.(md|mdx)$/i, '');
-const postUrl = `https://joniilmanpahmi.online/blog/${postSlug}`;
+const postSlug = post.id.split('/').map(encodeURIComponent).join('/');
+const siteUrl = Astro.site ?? new URL('https://joniilmanpahmi.online');
+const postUrl = new URL(`/blog/${postSlug}`, siteUrl).href;
+const authorUrl = post.data.author === 'Joni Ilman Pahmi' ? new URL('/bio', siteUrl).href : undefined;
 const readingTime = `${getReadingTimeMinutes(post.body)} menit baca`;
+const articleSchema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': post.data.schemaType ?? 'NewsArticle',
+  mainEntityOfPage: {
+    '@type': 'WebPage',
+    '@id': postUrl,
+  },
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+  author: {
+    '@type': 'Person',
+    name: post.data.author,
+    ...(authorUrl ? { url: authorUrl } : {}),
+  },
+  publisher: {
+    '@type': 'Person',
+    name: 'Joni Ilman Pahmi',
+    url: new URL('/bio', siteUrl).href,
+  },
+  articleSection: post.data.category,
+  inLanguage: 'id-ID',
+};
+if (post.data.image) articleSchema.image = [new URL(post.data.image, siteUrl).href];
+if (post.data.tags.length) articleSchema.keywords = post.data.tags;
+const articleSchemaJson = JSON.stringify(articleSchema).replace(/</g, '\\u003c');
 const giscus = {
   clientUrl: import.meta.env.PUBLIC_GISCUS_CLIENT_URL,
   repo: import.meta.env.PUBLIC_GISCUS_REPO,
@@ -56,6 +85,7 @@ const relatedPosts = allPosts
 ---
 
 <Layout title={post.data.title} description={post.data.description}>
+  <script type="application/ld+json" set:html={articleSchemaJson} />
   <div class="fixed left-0 top-0 z-50 h-1 w-full bg-slate-200 dark:bg-slate-800">
     <div id="reading-progress" class="h-full bg-linear-to-r from-[#1B4B66] to-[#E8935B]" style="width: 0%"></div>
   </div>
@@ -180,106 +210,122 @@ const relatedPosts = allPosts
     </div>
   </article>
 
-  <script is:inline>
-    const progressBar = document.getElementById('reading-progress');
-    const updateProgress = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-      if (progressBar) progressBar.style.width = `${Math.min(Math.max(progress, 0), 100)}%`;
-    };
-    window.addEventListener('scroll', updateProgress, { passive: true });
-    updateProgress();
+  <script>
+    let cleanupArticlePage = () => {};
+    document.addEventListener('astro:before-swap', () => cleanupArticlePage());
+    document.addEventListener('astro:page-load', () => {
+      cleanupArticlePage();
+      const pageEvents = new AbortController();
+      let frameObserver: MutationObserver | undefined;
+      let pageThemeObserver: MutationObserver | undefined;
+      let feedbackTimeout: number | undefined;
 
-    const copyLinkButton = document.getElementById('copy-article-link');
-    const shareFeedback = document.getElementById('share-feedback');
-    copyLinkButton?.addEventListener('click', async () => {
-      const shareUrl = copyLinkButton.dataset.copyUrl || window.location.href;
-      let copied = false;
+      const progressBar = document.getElementById('reading-progress');
+      const updateProgress = () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        if (progressBar) progressBar.style.width = `${Math.min(Math.max(progress, 0), 100)}%`;
+      };
+      window.addEventListener('scroll', updateProgress, { passive: true, signal: pageEvents.signal });
+      updateProgress();
 
-      try {
-        await navigator.clipboard.writeText(shareUrl);
-        copied = true;
-      } catch {
-        const input = document.createElement('textarea');
-        input.value = shareUrl;
-        input.setAttribute('readonly', '');
-        input.style.position = 'fixed';
-        input.style.opacity = '0';
-        document.body.appendChild(input);
-        input.select();
-        copied = document.execCommand('copy');
-        input.remove();
+      const copyLinkButton = document.getElementById('copy-article-link');
+      const shareFeedback = document.getElementById('share-feedback');
+      copyLinkButton?.addEventListener('click', async () => {
+        const shareUrl = copyLinkButton.dataset.copyUrl || window.location.href;
+        let copied = false;
+
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          copied = true;
+        } catch {
+          const input = document.createElement('textarea');
+          input.value = shareUrl;
+          input.setAttribute('readonly', '');
+          input.style.position = 'fixed';
+          input.style.opacity = '0';
+          document.body.appendChild(input);
+          input.select();
+          copied = document.execCommand('copy');
+          input.remove();
+        }
+
+        const message = copied ? 'Tautan artikel berhasil disalin.' : 'Tautan gagal disalin.';
+        if (shareFeedback) shareFeedback.textContent = message;
+        copyLinkButton.title = copied ? 'Tautan disalin' : 'Gagal menyalin tautan';
+        copyLinkButton.setAttribute('aria-label', copyLinkButton.title);
+        feedbackTimeout = window.setTimeout(() => {
+          copyLinkButton.title = 'Salin tautan artikel';
+          copyLinkButton.setAttribute('aria-label', 'Salin tautan artikel');
+          if (shareFeedback) shareFeedback.textContent = '';
+        }, 2200);
+      }, { signal: pageEvents.signal });
+
+      const giscusContainer = document.querySelector('.giscus[data-client-url]');
+      if (giscusContainer instanceof HTMLElement) {
+        const config = giscusContainer.dataset;
+        const getGiscusTheme = () => (
+          document.documentElement.classList.contains('dark') ? config.themeDark : config.themeLight
+        );
+        const giscusScript = document.createElement('script');
+        giscusScript.src = config.clientUrl ?? '';
+        giscusScript.async = true;
+        giscusScript.crossOrigin = config.crossorigin || 'anonymous';
+        giscusScript.dataset.repo = config.repo ?? '';
+        giscusScript.dataset.repoId = config.repoId ?? '';
+        giscusScript.dataset.category = config.category ?? '';
+        giscusScript.dataset.categoryId = config.categoryId ?? '';
+        giscusScript.dataset.mapping = config.mapping ?? '';
+        giscusScript.dataset.strict = config.strict ?? '';
+        giscusScript.dataset.reactionsEnabled = config.reactionsEnabled ?? '';
+        giscusScript.dataset.emitMetadata = config.emitMetadata ?? '';
+        giscusScript.dataset.inputPosition = config.inputPosition ?? '';
+        giscusScript.dataset.theme = getGiscusTheme() ?? '';
+        giscusScript.dataset.lang = config.lang ?? '';
+        giscusScript.dataset.loading = config.loading ?? '';
+
+        const giscusOrigin = new URL(giscusScript.src).origin;
+        giscusContainer.appendChild(giscusScript);
+
+        let giscusFrame: HTMLIFrameElement | null = null;
+        let giscusFrameLoaded = false;
+        let appliedTheme = giscusScript.dataset.theme;
+        const syncGiscusTheme = () => {
+          const nextTheme = getGiscusTheme();
+          if (!giscusFrame || !giscusFrameLoaded || !nextTheme || nextTheme === appliedTheme) return;
+          giscusFrame.contentWindow?.postMessage(
+            { giscus: { setConfig: { theme: nextTheme } } },
+            giscusOrigin,
+          );
+          appliedTheme = nextTheme;
+        };
+
+        frameObserver = new MutationObserver(() => {
+          const nextFrame = giscusContainer.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+          if (nextFrame === giscusFrame) return;
+          giscusFrame = nextFrame;
+          giscusFrameLoaded = false;
+          giscusFrame?.addEventListener('load', () => {
+            giscusFrameLoaded = true;
+            syncGiscusTheme();
+          }, { signal: pageEvents.signal });
+        });
+        frameObserver.observe(giscusContainer, { childList: true, subtree: true });
+
+        pageThemeObserver = new MutationObserver(syncGiscusTheme);
+        pageThemeObserver.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['class'],
+        });
       }
 
-      const message = copied ? 'Tautan artikel berhasil disalin.' : 'Tautan gagal disalin.';
-      if (shareFeedback) shareFeedback.textContent = message;
-      copyLinkButton.title = copied ? 'Tautan disalin' : 'Gagal menyalin tautan';
-      copyLinkButton.setAttribute('aria-label', copyLinkButton.title);
-      window.setTimeout(() => {
-        copyLinkButton.title = 'Salin tautan artikel';
-        copyLinkButton.setAttribute('aria-label', 'Salin tautan artikel');
-        if (shareFeedback) shareFeedback.textContent = '';
-      }, 2200);
-    });
-
-    const giscusContainer = document.querySelector('.giscus[data-client-url]');
-    if (giscusContainer instanceof HTMLElement) {
-      const config = giscusContainer.dataset;
-      const getGiscusTheme = () => (
-        document.documentElement.classList.contains('dark') ? config.themeDark : config.themeLight
-      );
-      const giscusScript = document.createElement('script');
-      giscusScript.src = config.clientUrl;
-      giscusScript.async = true;
-      giscusScript.crossOrigin = config.crossorigin || 'anonymous';
-      giscusScript.dataset.repo = config.repo;
-      giscusScript.dataset.repoId = config.repoId;
-      giscusScript.dataset.category = config.category;
-      giscusScript.dataset.categoryId = config.categoryId;
-      giscusScript.dataset.mapping = config.mapping;
-      giscusScript.dataset.strict = config.strict;
-      giscusScript.dataset.reactionsEnabled = config.reactionsEnabled;
-      giscusScript.dataset.emitMetadata = config.emitMetadata;
-      giscusScript.dataset.inputPosition = config.inputPosition;
-      giscusScript.dataset.theme = getGiscusTheme();
-      giscusScript.dataset.lang = config.lang;
-      giscusScript.dataset.loading = config.loading;
-
-      const giscusOrigin = new URL(giscusScript.src).origin;
-      giscusContainer.appendChild(giscusScript);
-
-      let giscusFrame = null;
-      let giscusFrameLoaded = false;
-      let appliedTheme = giscusScript.dataset.theme;
-      const syncGiscusTheme = () => {
-        const nextTheme = getGiscusTheme();
-        if (!giscusFrame || !giscusFrameLoaded || nextTheme === appliedTheme) return;
-        giscusFrame.contentWindow?.postMessage(
-          { giscus: { setConfig: { theme: nextTheme } } },
-          giscusOrigin,
-        );
-        appliedTheme = nextTheme;
+      cleanupArticlePage = () => {
+        pageEvents.abort();
+        frameObserver?.disconnect();
+        pageThemeObserver?.disconnect();
+        if (feedbackTimeout !== undefined) window.clearTimeout(feedbackTimeout);
       };
-
-      const frameObserver = new MutationObserver(() => {
-        const nextFrame = giscusContainer.querySelector('iframe.giscus-frame');
-        if (nextFrame === giscusFrame) return;
-        giscusFrame = nextFrame;
-        giscusFrameLoaded = false;
-        giscusFrame?.addEventListener('load', () => {
-          giscusFrameLoaded = true;
-          syncGiscusTheme();
-        });
-      });
-      frameObserver.observe(giscusContainer, { childList: true, subtree: true });
-
-      const pageThemeObserver = new MutationObserver(syncGiscusTheme);
-      pageThemeObserver.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['class'],
-      });
-    }
-
+    });
   </script>
 </Layout>

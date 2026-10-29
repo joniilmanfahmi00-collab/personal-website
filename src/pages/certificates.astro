@@ -1,0 +1,110 @@
+---
+import '../styles/global.css';
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/MainLayouts.astro';
+
+export const prerender = true;
+
+const certificates = (await getCollection('certificates'))
+  .filter((certificate) => !certificate.data.draft)
+  .sort((a, b) => {
+    const yearDifference = Number(b.data.year ?? 0) - Number(a.data.year ?? 0);
+    return yearDifference || a.data.title.localeCompare(b.data.title, 'id');
+  });
+
+const hasPublishedCertificates = certificates.length > 0;
+const robots = hasPublishedCertificates ? 'index, follow' : 'noindex, nofollow';
+const siteTitle = 'Sertifikat | Joni Ilman Pahmi';
+const siteDescription = 'Daftar sertifikat dan kredensial profesional Joni Ilman Pahmi.';
+const siteUrl = Astro.site ?? new URL('https://joniilmanpahmi.online');
+const courseEntries = certificates.filter((certificate) =>
+  Boolean(certificate.data.courseName?.trim() && certificate.data.courseDescription?.trim()),
+);
+const courseListSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Kursus dan Pelatihan | Joni Ilman Pahmi',
+  itemListElement: courseEntries.map((certificate, index) => {
+    const courseUrlObject = new URL('/certificates', siteUrl);
+    courseUrlObject.hash = certificate.id;
+    const courseUrl = courseUrlObject.href;
+    return {
+      '@type': 'ListItem',
+      position: index + 1,
+      url: courseUrl,
+      item: {
+        '@type': 'Course',
+        name: certificate.data.courseName,
+        description: certificate.data.courseDescription,
+        url: courseUrl,
+        ...(certificate.data.courseProvider
+          ? { provider: { '@type': 'Organization', name: certificate.data.courseProvider } }
+          : {}),
+      },
+    };
+  }),
+};
+const courseListSchemaJson = JSON.stringify(courseListSchema).replace(/</g, '\\u003c');
+---
+
+<Layout title={siteTitle} description={siteDescription} robots={robots}>
+  {courseEntries.length > 0 && <script type="application/ld+json" set:html={courseListSchemaJson} />}
+  <section class="relative min-h-[70vh] overflow-hidden bg-[#F7F5F0] py-16 transition-colors duration-300 dark:bg-[#0B1220] sm:py-20">
+    <div class="blueprint-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Breadcrumb" class="mb-8 font-mono text-xs text-slate-500 dark:text-slate-400">
+        <ol class="flex items-center gap-2">
+          <li><a href="/" class="transition-colors hover:text-[#E8935B]">Beranda</a></li>
+          <li aria-hidden="true" class="text-slate-400">/</li>
+          <li aria-current="page" class="font-semibold text-[#1B4B66] dark:text-[#7BB4D1]">Sertifikat</li>
+        </ol>
+      </nav>
+
+      <header class="mb-10 max-w-3xl">
+        <p class="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-[#E8935B]">// credentials_and_learning</p>
+        <h1 class="font-bevan text-3xl font-extrabold tracking-tight text-[#0F172A] dark:text-white sm:text-4xl md:text-5xl">
+          Sertifikat <span class="text-[#1B4B66] dark:text-[#7BB4D1]">&amp; Kredensial</span>
+        </h1>
+        <p class="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-400 sm:text-lg">
+          Rekam jejak pelatihan, pembelajaran, dan sertifikasi profesional.
+        </p>
+      </header>
+
+      {hasPublishedCertificates ? (
+        <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {certificates.map((certificate) => (
+            <article id={certificate.id} class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800/70">
+              {certificate.data.image && (
+                <img src={certificate.data.image} alt={`Sertifikat ${certificate.data.title}`} class="h-48 w-full border-b border-slate-100 bg-slate-50 object-contain p-4 dark:border-slate-700 dark:bg-slate-900" loading="lazy" />
+              )}
+              <div class="p-6">
+                <div class="mb-4 flex flex-wrap items-center gap-2">
+                  {certificate.data.year && <span class="rounded-full bg-[#1B4B66]/10 px-3 py-1 font-mono text-xs font-bold text-[#1B4B66] dark:bg-[#7BB4D1]/10 dark:text-[#7BB4D1]">{certificate.data.year}</span>}
+                  {certificate.data.featured && <span class="rounded-full bg-[#E8935B]/15 px-3 py-1 font-mono text-xs font-bold text-[#A64F18] dark:text-[#F4B184]">Unggulan</span>}
+                </div>
+                <h2 class="font-bevan text-lg leading-snug text-slate-900 dark:text-white">{certificate.data.title}</h2>
+                {certificate.data.description && <p class="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{certificate.data.description}</p>}
+                {certificate.data.courseName && <p class="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">Kursus: {certificate.data.courseName}</p>}
+                {certificate.data.issuer && <p class="mt-2 text-sm font-semibold text-slate-600 dark:text-slate-300">{certificate.data.issuer}</p>}
+                {certificate.data.credentialId && <p class="mt-4 break-all font-mono text-xs text-slate-500 dark:text-slate-400">ID: {certificate.data.credentialId}</p>}
+                {certificate.data.url && (
+                  <a href={certificate.data.url} target="_blank" rel="noopener noreferrer" class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-[#1B4B66] transition-colors hover:text-[#E8935B] dark:text-[#7BB4D1]">
+                    Verifikasi sertifikat <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="rounded-2xl border border-dashed border-slate-300 bg-white/70 px-6 py-14 text-center dark:border-slate-700 dark:bg-slate-900/50">
+          <span class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1B4B66]/10 font-bevan text-xl text-[#1B4B66] dark:text-[#7BB4D1]" aria-hidden="true">S</span>
+          <h2 class="mt-5 font-bevan text-xl text-slate-900 dark:text-white">Sertifikat belum ditambahkan</h2>
+          <p class="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-600 dark:text-slate-400">
+            Sertifikat dan kredensial profesional akan ditampilkan di halaman ini setelah ditambahkan ke koleksi konten. Silakan periksa kembali nanti.
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>

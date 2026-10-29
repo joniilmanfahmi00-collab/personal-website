@@ -39,6 +39,7 @@ const blog = defineCollection({
     updatedDate: z.coerce.date().nullable().optional(),
     author: z.string().nullish().transform((author) => author || 'Joni Ilman Pahmi'),
     category: z.string(),
+    schemaType: z.enum(['NewsArticle', 'BlogPosting', 'Article']).optional().default('NewsArticle'),
     tags: z
       .union([z.array(z.string()), z.string()])
       .optional()
@@ -72,4 +73,26 @@ const portfolio = defineCollection({
   }),
 });
 
-export const collections = { bio, blog, portfolio };
+const certificates = defineCollection({
+  loader: glob({
+    pattern: 'certificates/**/*.md',
+    base: './src/content',
+    generateId: ({ entry }) => entry.replace(/^certificates\//, '').replace(/\.md$/i, ''),
+  }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().nullish(),
+    courseName: z.string().nullish(),
+    courseDescription: z.string().nullish(),
+    courseProvider: z.string().nullish(),
+    issuer: z.string().nullish(),
+    year: z.string().nullish(),
+    credentialId: z.string().nullish(),
+    url: z.string().nullish(),
+    image: z.string().nullish(),
+    featured: z.boolean().optional().default(false),
+    draft: z.boolean().optional().default(false),
+  }),
+});
+
+export const collections = { bio, blog, portfolio, certificates };

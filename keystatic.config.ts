@@ -131,6 +131,16 @@ export default config({
           options: blogCategories,
           defaultValue: 'Web Dev',
         }),
+        schemaType: fields.select({
+          label: 'Jenis Schema Artikel',
+          description: 'NewsArticle jadi pilihan utama. Pilih Article atanapi BlogPosting kanggo artikel evergreen/tulisan blog biasa.',
+          options: [
+            { label: 'NewsArticle (utama)', value: 'NewsArticle' },
+            { label: 'BlogPosting', value: 'BlogPosting' },
+            { label: 'Article', value: 'Article' },
+          ],
+          defaultValue: 'NewsArticle',
+        }),
         tags: fields.text({
           label: 'Tag',
           description: 'Pisahkeun unggal tag ku koma, contona: SEO, WordPress, Tutorial.',
@@ -166,6 +176,7 @@ export default config({
       slugField: 'title',
       path: 'src/content/portfolio/*',
       format: { contentField: 'content' },
+      columns: ['title', 'category', 'pubDate', 'draft'],
       schema: {
         title: fields.slug({
           name: {
@@ -211,13 +222,34 @@ export default config({
       },
     }),
     certificates: collection({
-      label: 'Certificates',
+      label: 'Sertifikat',
       slugField: 'title',
-      path: 'src/content/keystatic/certificates/*',
+      path: 'src/content/certificates/*',
       format: { contentField: 'content' },
+      columns: ['title', 'issuer', 'year', 'draft'],
       schema: {
         title: fields.slug({
-          name: { label: 'Judul Sertifikat' },
+          name: {
+            label: 'Judul Sertifikat',
+            validation: { isRequired: true },
+          },
+        }),
+        description: fields.text({
+          label: 'Keterangan Sertifikat',
+          multiline: true,
+        }),
+        courseName: fields.text({
+          label: 'Ngaran Kursus (Schema Course)',
+          description: 'Eusian lamun sertifikat ieu ngabuktikeun parantos ngaréngsékeun kursus/palatihan.',
+        }),
+        courseDescription: fields.text({
+          label: 'Ringkesan Kursus (Schema Course)',
+          multiline: true,
+          description: 'Dipaké dina Course schema lamun Ngaran Kursus dieusian.',
+        }),
+        courseProvider: fields.text({
+          label: 'Panyadia Kursus (Schema Course)',
+          description: 'Organisasi anu nyayagikeun kursus; eusian lamun béda ti penerbit sertifikat.',
         }),
         issuer: fields.text({
           label: 'Penerbit / Institusi',
@@ -231,12 +263,21 @@ export default config({
         url: fields.url({
           label: 'Tautan Sertifikat',
         }),
+        image: fields.text({
+          label: 'Gambar Sertifikat',
+          description: 'Path gambar dina public/ atawa URL gambar sertifikat.',
+        }),
         featured: fields.checkbox({
-          label: 'Tampilkan di homepage',
+          label: 'Sertifikat unggulan',
+          defaultValue: false,
+        }),
+        draft: fields.checkbox({
+          label: 'Draft',
           defaultValue: false,
         }),
         content: fields.markdoc({
           label: 'Catatan / Keterangan',
+          extension: 'md',
         }),
       },
     }),
@@ -311,8 +352,7 @@ export default config({
     }),
   },
   ui: {
-    // Keystatic's sidebar navigation accepts collection/singleton IDs only;
-    // the custom Giscus inbox is linked from the brand area below.
+    // Keystatic keeps its own navigation. This brand shortcut opens the custom admin dashboard.
     navigation: {
       'Eusi Situs': ['blog', 'portfolio', 'certificates'],
       'Profil & SEO': ['bio', 'seoSettings'],
@@ -322,9 +362,9 @@ export default config({
       mark: ({ colorScheme }) => createElement(
         'a',
         {
-          href: '/admin/komentar',
-          title: 'Kelola komentar Giscus',
-          'aria-label': 'Kelola komentar Giscus',
+          href: '/admin',
+          title: 'Buka dasbor admin',
+          'aria-label': 'Buka dasbor admin',
           style: {
             height: 24,
             padding: '0 6px',
@@ -351,12 +391,9 @@ export default config({
             strokeLinejoin: 'round',
             'aria-hidden': true,
           },
-          createElement('path', {
-            d: 'M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z',
-          }),
-          createElement('path', { d: 'M8 11h.01M12 11h.01M16 11h.01' }),
+          createElement('path', { d: 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z' }),
         ),
-        createElement('span', { style: { fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' } }, 'Komentar'),
+        createElement('span', { style: { fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' } }, 'Dasbor'),
       ),
     },
   },

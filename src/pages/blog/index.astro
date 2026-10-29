@@ -133,12 +133,13 @@ const siteDescription = 'Tulisan tentang web development, tutorial, opini, dan p
   </style>
 
   <script>
-    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-blog-filter]');
-    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-blog-category]'));
-    const emptyMsg = document.getElementById('blog-empty');
-    const searchInput = document.getElementById('blog-search') as HTMLInputElement | null;
-    const paginationWrap = document.getElementById('blog-pagination');
-    const resultsMeta = document.getElementById('blog-results-meta');
+    document.addEventListener('astro:page-load', () => {
+      const buttons = document.querySelectorAll<HTMLButtonElement>('[data-blog-filter]');
+      const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-blog-category]'));
+      const emptyMsg = document.getElementById('blog-empty');
+      const searchInput = document.getElementById('blog-search') as HTMLInputElement | null;
+      const paginationWrap = document.getElementById('blog-pagination');
+      const resultsMeta = document.getElementById('blog-results-meta');
 
     const pageSize = 6;
     let currentFilter = 'Semua';
@@ -234,6 +235,7 @@ const siteDescription = 'Tulisan tentang web development, tutorial, opini, dan p
       applyFilters();
     });
 
-    applyFilters();
+      applyFilters();
+    });
   </script>
 </Layout>

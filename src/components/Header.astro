@@ -1,12 +1,13 @@
 ---
 // src/components/Navbar.astro
 import { Icon } from 'astro-icon/components';
+import { getCollection } from 'astro:content';
+const hasPublishedCertificates = (await getCollection('certificates')).some((certificate) => !certificate.data.draft);
 const menuNav = [
   { name: 'Beranda', href: '/' },
   { name: 'Profil', href: '/bio' },
   { name: 'Proyek', href: '/portfolio' },
-  // Sertifikat disumputkeun heula — aktipkeun deui upami Aa tos gaduh sertifikat:
-  // { name: 'Sertifikat', href: '/certificates' },
+  ...(hasPublishedCertificates ? [{ name: 'Sertifikat', href: '/certificates' }] : []),
   { name: 'Blog', href: '/blog' },
   { name: 'Hubungi Saya', href: '/hire-me' },
 ];
@@ -96,7 +97,9 @@ const pathname = Astro.url.pathname;
 
 <!-- LOGIKA JAVASCRIPT KANGGO BUKA TUTUP -->
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('astro:page-load', () => {
+        const controller = new AbortController();
+        document.addEventListener('astro:before-swap', () => controller.abort(), { once: true });
         const btn = document.getElementById('hamburger-btn');
         const sidebar = document.getElementById('mobile-sidebar');
         const overlay = document.getElementById('sidebar-overlay');
@@ -115,15 +118,15 @@ const pathname = Astro.url.pathname;
             cIcon?.classList.toggle('hidden');
         }
 
-        btn?.addEventListener('click', toggleMenu);
+        btn?.addEventListener('click', toggleMenu, { signal: controller.signal });
 
         // Tutup sidebar mobile pas mencet Escape atanapi salah sahiji menuna
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && sidebar && !sidebar.classList.contains('translate-x-full')) toggleMenu();
-        });
+        }, { signal: controller.signal });
         sidebar?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
             if (sidebar && !sidebar.classList.contains('translate-x-full')) toggleMenu();
-        }));
+        }, { signal: controller.signal }));
 
         // Toggle tema terang/poek + simpen pilihan user
         const themeBtn = document.getElementById('theme-toggle');
@@ -139,7 +142,7 @@ const pathname = Astro.url.pathname;
             const isDark = document.documentElement.classList.toggle('dark');
             try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
             syncThemeIcon();
-        });
-        overlay?.addEventListener('click', toggleMenu);
+        }, { signal: controller.signal });
+        overlay?.addEventListener('click', toggleMenu, { signal: controller.signal });
     });
 </script>

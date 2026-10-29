@@ -100,6 +100,7 @@ const siteDescription = 'Kumpulan proyek dan showcase pengembangan web Joni Ilma
         })}
       </div>
 
+      <nav id="portfolio-pagination" aria-label="Paginasi portofolio" class="mt-10 hidden items-center justify-center gap-3"></nav>
       <p id="portfolio-empty" class="hidden py-10 text-center font-mono text-sm text-slate-500 dark:text-slate-400">// Tidak ada proyek yang cocok.</p>
     </div>
   </section>
@@ -112,33 +113,87 @@ const siteDescription = 'Kumpulan proyek dan showcase pengembangan web Joni Ilma
   </style>
 
   <script>
-    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-portfolio-filter]');
-    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-portfolio-card]'));
-    const search = document.getElementById('portfolio-search') as HTMLInputElement | null;
-    const empty = document.getElementById('portfolio-empty');
-    const results = document.getElementById('portfolio-results-meta');
-    let activeCategory = 'Semua';
+    document.addEventListener('astro:page-load', () => {
+      const buttons = document.querySelectorAll<HTMLButtonElement>('[data-portfolio-filter]');
+      const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-portfolio-card]'));
+      const search = document.getElementById('portfolio-search') as HTMLInputElement | null;
+      const empty = document.getElementById('portfolio-empty');
+      const results = document.getElementById('portfolio-results-meta');
+      const pagination = document.getElementById('portfolio-pagination');
+      const pageSize = 6;
+      let activeCategory = 'Semua';
+      let currentPage = 1;
 
     function applyFilters() {
       const query = (search?.value ?? '').trim().toLowerCase();
-      let visible = 0;
-      cards.forEach((card) => {
+      const filtered = cards.filter((card) => {
         const categoryMatches = activeCategory === 'Semua' || card.dataset.portfolioCategory === activeCategory;
         const queryMatches = !query || (card.dataset.portfolioSearch ?? '').includes(query);
-        const show = categoryMatches && queryMatches;
-        card.classList.toggle('hidden', !show);
-        if (show) visible++;
+        return categoryMatches && queryMatches;
       });
-      if (empty) empty.classList.toggle('hidden', visible > 0);
-      if (results) results.textContent = `Menampilkan ${visible} proyek`;
+      const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+      currentPage = Math.min(currentPage, totalPages);
+      const start = (currentPage - 1) * pageSize;
+      const pageCards = new Set(filtered.slice(start, start + pageSize));
+
+      cards.forEach((card) => {
+        card.classList.toggle('hidden', !pageCards.has(card));
+      });
+      if (empty) empty.classList.toggle('hidden', filtered.length > 0);
+      if (results) {
+        const firstItem = filtered.length ? start + 1 : 0;
+        const lastItem = Math.min(start + pageSize, filtered.length);
+        results.textContent = `Menampilkan ${firstItem}–${lastItem} dari ${filtered.length} proyek`;
+      }
+
+      if (pagination) {
+        pagination.classList.toggle('hidden', filtered.length <= pageSize);
+        pagination.innerHTML = '';
+
+        const previous = document.createElement('button');
+        previous.type = 'button';
+        previous.textContent = 'Sebelumnya';
+        previous.disabled = currentPage === 1;
+        previous.className = 'rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-600 disabled:opacity-40 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200';
+        previous.addEventListener('click', () => {
+          if (currentPage > 1) {
+            currentPage--;
+            applyFilters();
+          }
+        });
+
+        const pageInfo = document.createElement('span');
+        pageInfo.setAttribute('aria-live', 'polite');
+        pageInfo.className = 'text-sm font-semibold text-slate-600 dark:text-slate-300';
+        pageInfo.textContent = `Halaman ${currentPage} / ${totalPages}`;
+
+        const next = document.createElement('button');
+        next.type = 'button';
+        next.textContent = 'Berikutnya';
+        next.disabled = currentPage === totalPages;
+        next.className = 'rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-600 disabled:opacity-40 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200';
+        next.addEventListener('click', () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            applyFilters();
+          }
+        });
+
+        pagination.append(previous, pageInfo, next);
+      }
     }
 
     buttons.forEach((button) => button.addEventListener('click', () => {
       activeCategory = button.dataset.portfolioFilter ?? 'Semua';
+      currentPage = 1;
       buttons.forEach((item) => item.setAttribute('data-active', String(item === button)));
       applyFilters();
     }));
-    search?.addEventListener('input', applyFilters);
-    applyFilters();
+    search?.addEventListener('input', () => {
+      currentPage = 1;
+      applyFilters();
+    });
+      applyFilters();
+    });
   </script>
 </Layout>
