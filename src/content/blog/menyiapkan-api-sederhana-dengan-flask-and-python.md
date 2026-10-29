@@ -1,21 +1,24 @@
 ---
-title: "Menyiapkan API Sederhana dengan Flask & Python"
-description: "Panduan praktis mengembangkan endpoint API ringan dengan Flask untuk kebutuhan aplikasi internal atau dashboard."
-category: "Tutorial"
+title: Menyiapkan API Sederhana dengan Flask & Python
+description: >-
+  Panduan praktis mengembangkan endpoint API ringan dengan Flask untuk kebutuhan
+  aplikasi internal atau dashboard.
 pubDate: 2025-11-15
-author: "Joni Ilman Pahmi"
-tags: "Python, Flask, API, Backend"
-image: "/hero.jpg"
+author: Joni Ilman Pahmi
+category: Tutorial
+schemaType: Article
+tags: Python, Flask, API, Backend
+image: /hero.jpg
 draft: false
+seo: {}
 ---
-
 ## Apa yang dibutuhkan?
 
 Untuk mulai membuat API, biasanya kita butuh tiga komponen dasar:
 
 1. endpoint utama
-2. validasi input
-3. format respons yang konsisten
+1. validasi input
+1. format respons yang konsisten
 
 Dengan Flask, struktur proyek bisa dibuat sangat ringkas. Saya biasanya mulai dengan route dasar, lalu menambahkan model data dan validasi sederhana.
 
