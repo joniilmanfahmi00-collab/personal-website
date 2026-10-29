@@ -4,6 +4,7 @@ description: >-
   Panduan praktis mengembangkan endpoint API ringan dengan Flask untuk kebutuhan
   aplikasi internal atau dashboard.
 pubDate: 2025-11-15
+updatedDate: 2026-10-29
 author: Joni Ilman Pahmi
 category: Tutorial
 schemaType: Article
