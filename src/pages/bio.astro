@@ -45,8 +45,8 @@ const biodataRows: { label: string; value: string | undefined }[] = [
     { label: 'Tahun Aktif', value: data.tahunAktif || undefined },
 ].filter((row) => row.value);
 
-const siteTitle = `${data.namaLengkap} - Biodata & Biografi`;
-const siteDescription = data.ringkasan ?? `Biodata dan biografi ${data.namaLengkap}.`;
+const siteTitle = `${data.namaLengkap} - Umur, Profesi, Jejak Karya, Biodata & Biografi`;
+const siteDescription = data.ringkasan ?? `Yuk telusuri Umur, Profesi, Jejak Karya, Biodata & Biografi dari ${data.namaLengkap}. Dan ikuti sepak terjangnya di dunia teknologi dan hukum.`;
 const photo = data.photo || '/profile2.avif';
 const sameAs = (data.sameAs ?? []).filter((url): url is string => typeof url === 'string' && url.length > 0);
 
