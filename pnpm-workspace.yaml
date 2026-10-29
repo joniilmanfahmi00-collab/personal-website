@@ -1,3 +1,6 @@
+# Explicitly mark this as a single-package project; pnpm 9 requires this key.
+packages: []
+
 allowBuilds:
   esbuild: true
   sharp: true
