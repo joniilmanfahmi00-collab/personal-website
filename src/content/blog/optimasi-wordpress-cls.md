@@ -4,7 +4,7 @@ description: "Pengalaman memperbaiki CLS untuk menjaga performa, pengalaman peng
 category: "Web Dev"
 pubDate: 2026-02-20
 author: "Joni Ilman Pahmi"
-tags: ["WordPress", "SEO", "Performance", "Frontend"]
+tags: "WordPress, SEO, Performance, Frontend"
 image: "/hero.jpg"
 draft: false
 ---

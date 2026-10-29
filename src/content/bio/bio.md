@@ -23,9 +23,11 @@ ringkasan: "Biodata dan biografi Joni Ilman Pahmi, Full-Stack Web Developer asal
 # sameAs kanggo JSON-LD Person Schema — dieusi ku Aa nyalira (hapus tanda # saatos dieusi)
 # Wajib URL lengkep nganggo https://, conto:
 sameAs:
-   - "https://github.com/username-aa"
-   - "https://www.linkedin.com/in/username-aa"
-   - "https://www.instagram.com/username-aa"
+   - "https://github.com"
+   - "https://linkedin.com"
+   - "https://instagram.com"
+   - "https://tiktok.com"
+   - "https://twitter.com"
 ---
 
 ## Biografi

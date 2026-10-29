@@ -1,0 +1,144 @@
+---
+import '../../styles/global.css';
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/MainLayouts.astro';
+
+const projects = (await getCollection('portfolio'))
+  .filter((project) => !project.data.draft)
+  .sort((a, b) => (b.data.pubDate?.valueOf() ?? 0) - (a.data.pubDate?.valueOf() ?? 0));
+
+const categories = ['Semua', ...new Set(projects.map((project) => project.data.category))];
+const siteTitle = 'Portofolio Joni Ilman Pahmi';
+const siteDescription = 'Kumpulan proyek dan showcase pengembangan web Joni Ilman Pahmi, disusun dari proyek terbaru.';
+---
+
+<Layout title={siteTitle} description={siteDescription}>
+  <section class="relative overflow-hidden bg-[#F7F5F0] py-16 transition-colors duration-300 dark:bg-[#0B1220] sm:py-20">
+    <div class="blueprint-grid pointer-events-none absolute inset-0" aria-hidden="true"></div>
+    <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Breadcrumb" class="mb-8 font-mono text-xs text-slate-500 dark:text-slate-400">
+        <ol class="flex items-center gap-2">
+          <li><a href="/" class="transition-colors hover:text-[#E8935B]">Beranda</a></li>
+          <li aria-hidden="true" class="text-slate-400">/</li>
+          <li aria-current="page" class="font-semibold text-[#1B4B66] dark:text-[#7BB4D1]">Portofolio</li>
+        </ol>
+      </nav>
+
+      <header class="mb-10 max-w-3xl">
+        <p class="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-[#E8935B]">// portfolio_showcase</p>
+        <h1 class="font-bevan text-3xl font-extrabold tracking-tight text-[#0F172A] dark:text-white sm:text-4xl md:text-5xl">
+          Karya &amp; <span class="text-[#1B4B66] dark:text-[#7BB4D1]">Proyek</span>
+        </h1>
+        <p class="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-400 sm:text-lg">
+          Pilihan proyek yang pernah saya kerjakan, mulai dari aplikasi web hingga solusi untuk website dan bisnis digital. Proyek terbaru tampil lebih dulu.
+        </p>
+      </header>
+
+      <div class="mb-8 flex flex-col gap-4">
+        <label class="relative block">
+          <span class="sr-only">Cari proyek</span>
+          <svg class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"/></svg>
+          <input id="portfolio-search" type="search" placeholder="Cari proyek, teknologi, atau klien..." class="w-full rounded-xl border border-slate-200 bg-white px-11 py-3 text-sm text-slate-700 shadow-sm outline-none transition focus:border-[#1B4B66] focus:ring-2 focus:ring-[#1B4B66]/10 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" />
+        </label>
+
+        <div class="flex flex-wrap gap-3" aria-label="Filter kategori proyek">
+          {categories.map((category, index) => (
+            <button type="button" data-portfolio-filter={category} data-active={index === 0 ? 'true' : 'false'} class="portfolio-filter rounded-full border px-5 py-2 text-sm font-semibold transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1B4B66]">
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <p id="portfolio-results-meta" class="mb-6 text-sm text-slate-500 dark:text-slate-400">Menampilkan {projects.length} proyek</p>
+
+      <div id="portfolio-grid" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {projects.map((project) => {
+          const slug = project.id.split('/').map(encodeURIComponent).join('/');
+          const date = project.data.pubDate
+            ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(project.data.pubDate)
+            : null;
+          const searchText = `${project.data.title} ${project.data.summary} ${project.data.client ?? ''} ${project.data.stack.join(' ')}`.toLowerCase();
+
+          return (
+            <article data-portfolio-card data-portfolio-category={project.data.category} data-portfolio-search={searchText} class="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-slate-700 dark:bg-slate-800/50">
+              <a href={`/portfolio/${slug}`} class="block overflow-hidden border-b border-slate-100 dark:border-slate-700" aria-label={`Lihat detail ${project.data.title}`}>
+                <img src={project.data.image || '/hero.jpg'} alt={project.data.title} class="h-52 w-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+              </a>
+
+              <div class="flex grow flex-col p-6">
+                <div class="mb-4 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-500 dark:text-slate-400">
+                  <span class="rounded-md bg-[#E8935B]/10 px-3 py-1 font-bold uppercase tracking-wider text-[#E8935B]">{project.data.category}</span>
+                  {date && <time datetime={project.data.pubDate?.toISOString()}>{date}</time>}
+                </div>
+
+                {project.data.client && <p class="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{project.data.client}</p>}
+                <h2 class="text-xl font-bold leading-snug text-[#0F172A] dark:text-white">
+                  <a href={`/portfolio/${slug}`} class="transition-colors hover:text-[#E8935B]">{project.data.title}</a>
+                </h2>
+                <p class="mt-3 flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{project.data.summary}</p>
+
+                {project.data.stack.length > 0 && (
+                  <div class="mt-5 flex flex-wrap gap-2">
+                    {project.data.stack.map((tech) => <span class="rounded-md bg-[#1B4B66]/10 px-2.5 py-1 text-[10px] font-mono font-semibold uppercase tracking-wider text-[#1B4B66] dark:bg-[#7BB4D1]/10 dark:text-[#7BB4D1]">{tech}</span>)}
+                  </div>
+                )}
+
+                <div class="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4 dark:border-slate-700/70">
+                  <a href={`/portfolio/${slug}`} class="inline-flex items-center gap-2 text-sm font-semibold text-[#1B4B66] transition-colors hover:text-[#E8935B] dark:text-[#7BB4D1]">
+                    Detail proyek
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+                  </a>
+                  <div class="flex gap-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    {project.data.liveUrl && <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" class="hover:text-[#E8935B]">Live</a>}
+                    {project.data.repoUrl && <a href={project.data.repoUrl} target="_blank" rel="noopener noreferrer" class="hover:text-[#E8935B]">Kode sumber</a>}
+                  </div>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <p id="portfolio-empty" class="hidden py-10 text-center font-mono text-sm text-slate-500 dark:text-slate-400">// Tidak ada proyek yang cocok.</p>
+    </div>
+  </section>
+
+  <style>
+    .portfolio-filter { background: rgba(255, 255, 255, .7); border-color: rgba(148, 163, 184, .55); color: #334155; }
+    .portfolio-filter[data-active='true'] { background: #1B4B66; border-color: #1B4B66; color: #fff; box-shadow: 0 12px 24px rgba(27, 75, 102, .18); }
+    :global(.dark) .portfolio-filter { background: rgba(15, 23, 42, .55); border-color: rgba(100, 116, 139, .7); color: #dbeafe; }
+    :global(.dark) .portfolio-filter[data-active='true'] { background: #7BB4D1; border-color: #7BB4D1; color: #0f172a; }
+  </style>
+
+  <script>
+    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-portfolio-filter]');
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-portfolio-card]'));
+    const search = document.getElementById('portfolio-search') as HTMLInputElement | null;
+    const empty = document.getElementById('portfolio-empty');
+    const results = document.getElementById('portfolio-results-meta');
+    let activeCategory = 'Semua';
+
+    function applyFilters() {
+      const query = (search?.value ?? '').trim().toLowerCase();
+      let visible = 0;
+      cards.forEach((card) => {
+        const categoryMatches = activeCategory === 'Semua' || card.dataset.portfolioCategory === activeCategory;
+        const queryMatches = !query || (card.dataset.portfolioSearch ?? '').includes(query);
+        const show = categoryMatches && queryMatches;
+        card.classList.toggle('hidden', !show);
+        if (show) visible++;
+      });
+      if (empty) empty.classList.toggle('hidden', visible > 0);
+      if (results) results.textContent = `Menampilkan ${visible} proyek`;
+    }
+
+    buttons.forEach((button) => button.addEventListener('click', () => {
+      activeCategory = button.dataset.portfolioFilter ?? 'Semua';
+      buttons.forEach((item) => item.setAttribute('data-active', String(item === button)));
+      applyFilters();
+    }));
+    search?.addEventListener('input', applyFilters);
+    applyFilters();
+  </script>
+</Layout>

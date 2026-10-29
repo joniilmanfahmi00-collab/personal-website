@@ -20,7 +20,7 @@ function hitungUmur(tgl: Date): number {
     return umur;
 }
 
-const tanggalLahirDate: Date | undefined = data.tanggalLahir;
+const tanggalLahirDate = data.tanggalLahir ?? undefined;
 const umur = data.umur ?? (tanggalLahirDate ? hitungUmur(tanggalLahirDate) : undefined);
 const tanggalFormatted = tanggalLahirDate
     ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(tanggalLahirDate)
@@ -48,6 +48,7 @@ const biodataRows: { label: string; value: string | undefined }[] = [
 const siteTitle = `${data.namaLengkap} - Biodata & Biografi`;
 const siteDescription = data.ringkasan ?? `Biodata dan biografi ${data.namaLengkap}.`;
 const photo = data.photo || '/profile2.avif';
+const sameAs = (data.sameAs ?? []).filter((url): url is string => typeof url === 'string' && url.length > 0);
 
 // JSON-LD Person Schema: tanggal lahir format ISO, URL absolut upami `site` disetel
 const birthDateISO = tanggalLahirDate ? tanggalLahirDate.toISOString().slice(0, 10) : undefined;
@@ -67,8 +68,8 @@ const imageUrl = Astro.site ? new URL(photo, Astro.site).href : photo;
         spouseName={data.pasangan || undefined}
         image={imageUrl}
         url={pageUrl}
-        description={data.ringkasan}
-        sameAs={data.sameAs}
+        description={data.ringkasan || undefined}
+        sameAs={sameAs}
     />
     <section class="bg-[#F7F5F0] dark:bg-[#0B1220] py-12 sm:py-16 relative overflow-hidden transition-colors duration-300">
         <div class="blueprint-grid absolute inset-0 pointer-events-none" aria-hidden="true"></div>

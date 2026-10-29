@@ -1,0 +1,109 @@
+/* Dark palette from the site's .dark theme. */
+:host,
+html {
+  --font-family-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-family-monospace: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+main {
+  --color-fg-default: #e2e8f0;
+  --color-fg-muted: #cbd5e1;
+  --color-fg-subtle: #94a3b8;
+
+  --color-canvas-default: #1e293b;
+  --color-canvas-overlay: #0f172a;
+  --color-canvas-inset: #0f172a;
+  --color-canvas-subtle: #0f172a;
+
+  --color-border-default: #334155;
+  --color-border-muted: #334155;
+  --color-neutral-muted: rgb(148 163 184 / 18%);
+
+  --color-accent-fg: #7bb4d1;
+  --color-accent-emphasis: #7bb4d1;
+  --color-accent-muted: rgb(123 180 209 / 30%);
+  --color-accent-subtle: rgb(123 180 209 / 10%);
+
+  --color-btn-text: #e2e8f0;
+  --color-btn-bg: #0f172a;
+  --color-btn-border: #334155;
+  --color-btn-hover-bg: #1e293b;
+  --color-btn-hover-border: #7bb4d1;
+  --color-btn-active-bg: #263449;
+  --color-btn-active-border: #7bb4d1;
+  --color-btn-selected-bg: #263449;
+
+  --color-btn-primary-text: #0b1220;
+  --color-btn-primary-bg: #7bb4d1;
+  --color-btn-primary-border: #7bb4d1;
+  --color-btn-primary-hover-bg: #e8935b;
+  --color-btn-primary-hover-border: #e8935b;
+  --color-btn-primary-selected-bg: #7bb4d1;
+
+  --color-success-fg: #86efac;
+  --color-attention-fg: #facc15;
+  --color-danger-fg: #fca5a5;
+  --color-social-reaction-bg-hover: #263449;
+  --color-social-reaction-bg-reacted-hover: #1d3b4c;
+}
+
+main .gsc-homepage-bg {
+  background-color: #1e293b;
+}
+
+.gsc-comment-box {
+  border-color: #334155;
+}
+
+/* Keep the editor bright and readable against the dark discussion panel. */
+.gsc-comment-box,
+.gsc-comment-box-tabs,
+.gsc-comment-box-main,
+.gsc-comment-box-textarea,
+.gsc-comment-box-bottom {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.gsc-comment-box {
+  border-color: #cbd5e1 !important;
+}
+
+.gsc-comment-box textarea,
+.gsc-comment-box-textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  caret-color: #0f172a !important;
+}
+
+.gsc-comment-box textarea::placeholder,
+.gsc-comment-box-textarea::placeholder {
+  color: #64748b !important;
+  opacity: 1;
+}
+
+.gsc-comment-box button:not(.btn-primary),
+.gsc-comment-box [role="tab"] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+.gsc-comment-box .btn-primary {
+  background-color: #1b4b66 !important;
+  border-color: #1b4b66 !important;
+  color: #ffffff !important;
+}
+
+/* Counters and labels sit on the dark panel outside the white editor. */
+.gsc-header,
+.gsc-header *,
+.gsc-reactions,
+.gsc-reactions *,
+.gsc-comments-count,
+.gsc-comments-count *,
+.gsc-reactions-count,
+.gsc-reactions-count *,
+.gsc-timeline {
+  color: #e2e8f0 !important;
+}

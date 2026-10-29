@@ -9,6 +9,7 @@ import icon from 'astro-icon';
 import keystatic from '@keystatic/astro';
 
 export default defineConfig({
+  site: 'https://joniilmanpahmi.online',
   output: 'server',
   adapter: node({ mode: 'standalone' }),
   vite: {

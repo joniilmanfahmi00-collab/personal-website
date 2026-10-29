@@ -4,7 +4,7 @@ description: "Panduan praktis mengembangkan endpoint API ringan dengan Flask unt
 category: "Tutorial"
 pubDate: 2025-11-15
 author: "Joni Ilman Pahmi"
-tags: ["Python", "Flask", "API", "Backend"]
+tags: "Python, Flask, API, Backend"
 image: "/hero.jpg"
 draft: false
 ---

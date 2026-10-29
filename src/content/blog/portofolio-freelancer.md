@@ -4,7 +4,7 @@ description: "Portofolio pribadi membantu freelancer membangun kepercayaan, memp
 category: "Opini"
 pubDate: 2026-01-10
 author: "Joni Ilman Pahmi"
-tags: ["Career", "Branding", "Freelance"]
+tags: "Career, Branding, Freelance"
 image: "/profile2.avif"
 draft: false
 ---

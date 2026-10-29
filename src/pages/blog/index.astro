@@ -2,6 +2,7 @@
 import '../../styles/global.css';
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/MainLayouts.astro';
+import { getReadingTimeMinutes } from '../../utils/readingTime';
 
 const allPosts = await getCollection('blog');
 const posts = allPosts
@@ -66,8 +67,7 @@ const siteDescription = 'Tulisan tentang web development, tutorial, opini, dan p
           const slug = post.id.replace(/\.(md|mdx)$/i, '');
           const url = `/blog/${slug}`;
           const date = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(post.data.pubDate);
-          const postBody = post.body ?? '';
-          const readingTime = `${Math.max(1, Math.ceil(postBody.split(/\s+/).filter(Boolean).length / 200))} menit baca`;
+          const readingTime = `${getReadingTimeMinutes(post.body)} menit baca`;
 
           return (
             <article data-blog-category={post.data.category} data-blog-title={post.data.title.toLowerCase()} data-blog-description={post.data.description.toLowerCase()} data-blog-tags={post.data.tags.join(' ').toLowerCase()} class="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800/50">

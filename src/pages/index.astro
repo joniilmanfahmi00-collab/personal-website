@@ -4,6 +4,7 @@ import { Icon } from 'astro-icon/components';
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/MainLayouts.astro';
 import HeroTerminal from '../components/HeroTerminal.astro';
+import { getReadingTimeMinutes } from '../utils/readingTime';
 
 const siteTitle = 'Joni Ilman Pahmi - Web Developer Full-Stack & Freelancer';
 
@@ -18,33 +19,6 @@ const statusBar = [
     { icon: 'lucide:user-check', label: 'Prioritas UX' },
     { icon: 'lucide:code', label: 'Kode Bersih' },
     { icon: 'lucide:cog', label: 'Mudah Dirawat' },
-];
-
-const featuredProjects = [
-    {
-        title: "WarungPress",
-        description: "Jembatan WhatsApp open-source untuk WooCommerce yang menghubungkan proses checkout toko online ke WhatsApp secara otomatis.",
-        tech: ["PHP", "WooCommerce", "WordPress"],
-        image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        liveUrl: "#",
-        githubUrl: "https://github.com",
-    },
-    {
-        title: "MiniFlix - Telegram App",
-        description: "Aplikasi streaming film berbasis katalog interaktif yang dirancang untuk menjalankan fungsi micro-app langsung di dalam ekosistem Telegram.",
-        tech: ["JavaScript", "Tailwind", "Telegram API"],
-        image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        liveUrl: "#",
-        githubUrl: null, // Biarkan null jika proyek bersifat *closed source*.
-    },
-    {
-        title: "Preneur.space Web System",
-        description: "Preneur.space adalah layanan konsultasi independen dengan model done-for-you (DFY) yang berfokus pada optimasi performa website WordPress dan WooCommerce serta pengelolaan kampanye Google Ads untuk solopreneur dan usaha kecil-menengah (UKM).",
-        tech: ["Python", "Flask", "Bootstrap 5"],
-        image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        liveUrl: "https://preneur.space/",
-        githubUrl: null,
-    }
 ];
 
 const techStackCategories = [
@@ -99,6 +73,12 @@ const techStackCategories = [
         ]
     }, 
 ];
+const allPortfolio = await getCollection('portfolio');
+const latestProjects = allPortfolio
+    .filter((project) => !project.data.draft)
+    .sort((a, b) => (b.data.pubDate?.valueOf() ?? 0) - (a.data.pubDate?.valueOf() ?? 0))
+    .slice(0, 3);
+
 const allPosts = await getCollection('blog');
 const publishedPosts = allPosts
     .filter((post) => !post.data.draft)
@@ -109,8 +89,7 @@ const kategoriBlog = ['Semua', ...new Set(publishedPosts.map((post) => post.data
 
 const purwarupaArtikel = publishedPosts.map((post) => {
     const slug = post.id.replace(/\.(md|mdx)$/i, '');
-    const body = post.body ?? '';
-    const readTime = `${Math.max(1, Math.ceil(body.split(/\s+/).filter(Boolean).length / 220))} menit baca`;
+    const readTime = `${getReadingTimeMinutes(post.body)} menit baca`;
     const date = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(post.data.pubDate);
 
     return {
@@ -270,7 +249,7 @@ const purwarupaArtikel = publishedPosts.map((post) => {
             <!-- Judul bagian -->
             <div class="text-center md:text-left mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <p class="font-mono text-xs font-semibold text-[#E8935B] tracking-wider mb-2 uppercase">// selected_works.json</p>
+                    <p class="font-mono text-xs font-semibold text-[#E8935B] tracking-wider mb-2 uppercase">// portfolio_showcase</p>
                     <h2 class="font-bevan text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#0F172A] dark:text-white tracking-tight">
                         Karya <span class="text-[#1B4B66] dark:text-[#7BB4D1]">Pilihan</span>
                     </h2>
@@ -283,28 +262,33 @@ const purwarupaArtikel = publishedPosts.map((post) => {
 
             <!-- Grid Karya -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {featuredProjects.map((project) => (
+                {latestProjects.map((project) => {
+                    const slug = project.id.split('/').map(encodeURIComponent).join('/');
+                    const date = project.data.pubDate
+                        ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(project.data.pubDate)
+                        : null;
+                    return (
                     <div class="group bg-white dark:bg-slate-800/50 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-[#1B4B66]/30 dark:hover:border-[#7BB4D1]/50 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col">
                         
                         <!-- Thumbnail proyek -->
                         <div class="relative overflow-hidden aspect-video border-b border-slate-100 dark:border-slate-700">
                             <!-- Ganti URL dengan gambar proyek asli sebelum deploy, misalnya /images/project1.png. -->
                             <img 
-                                src={project.image} 
-                                alt={project.title} 
+                                src={project.data.image || '/hero.jpg'}
+                                alt={project.data.title}
                                 class="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
                                 loading="lazy"
                             />
                             
                             <!-- Overlay saat kursor diarahkan ke kartu -->
                             <div class="absolute inset-0 bg-[#0B1220]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
-                                {project.liveUrl && (
-                                    <a href={project.liveUrl} target="_blank" aria-label="Demo langsung" class="p-3 bg-[#E8935B] text-white rounded-full hover:bg-[#DB7F3F] hover:scale-110 transition-all shadow-lg">
+                                {project.data.liveUrl && (
+                                    <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`Lihat ${project.data.title}`} class="p-3 bg-[#E8935B] text-white rounded-full hover:bg-[#DB7F3F] hover:scale-110 transition-all shadow-lg">
                                         <Icon name="lucide:external-link" class="w-5 h-5" />
                                     </a>
                                 )}
-                                {project.githubUrl && (
-                                    <a href={project.githubUrl} target="_blank" aria-label="Kode sumber" class="p-3 bg-white text-[#0F172A] rounded-full hover:bg-slate-100 hover:scale-110 transition-all shadow-lg">
+                                {project.data.repoUrl && (
+                                    <a href={project.data.repoUrl} target="_blank" rel="noopener noreferrer" aria-label={`Repository ${project.data.title}`} class="p-3 bg-white text-[#0F172A] rounded-full hover:bg-slate-100 hover:scale-110 transition-all shadow-lg">
                                         <Icon name="lucide:github" class="w-5 h-5" />
                                     </a>
                                 )}
@@ -315,7 +299,7 @@ const purwarupaArtikel = publishedPosts.map((post) => {
                         <div class="p-6 flex flex-col grow">
                             <!-- Badges Tech Stack -->
                             <div class="flex flex-wrap gap-2 mb-4">
-                                {project.tech.map((t) => (
+                                {project.data.stack.map((t) => (
                                     <span class="px-2.5 py-1 text-[10px] font-mono font-semibold uppercase tracking-wider text-[#1B4B66] dark:text-[#7BB4D1] bg-[#1B4B66]/10 dark:bg-[#7BB4D1]/10 rounded-md">
                                         {t}
                                     </span>
@@ -323,16 +307,22 @@ const purwarupaArtikel = publishedPosts.map((post) => {
                             </div>
                             
                             <h3 class="text-xl font-bold text-[#0F172A] dark:text-white mb-2 line-clamp-1">
-                                {project.title}
+                                <a href={`/portfolio/${slug}`} class="hover:text-[#E8935B] transition-colors">{project.data.title}</a>
                             </h3>
                             
                             <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4 line-clamp-3">
-                                {project.description}
+                                {project.data.summary}
                             </p>
+                            {date && <time datetime={project.data.pubDate?.toISOString()} class="mt-auto text-xs font-mono text-slate-500 dark:text-slate-400">{date}</time>}
                         </div>
                     </div>
-                ))}
+                    );
+                })}
             </div>
+
+            {latestProjects.length === 0 && (
+                <p class="rounded-2xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">Showcase proyek akan ditampilkan di sini.</p>
+            )}
 
         </div>
     </section>
