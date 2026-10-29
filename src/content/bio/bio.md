@@ -3,9 +3,15 @@ namaLengkap: Joni Ilman Pahmi
 namaPanggilan: John Ming
 tempatLahir: Cilacap
 tanggalLahir: 2000-09-15
+jenisKelamin: Laki-laki
 profesi: Full-Stack Web Developer
+zodiak: Libra
 kebangsaan: Indonesia
-photo: /profile2.avif
+domisili: Cilacap
+pendidikan: Universitas Islam Darussalam Ciamis (2019 - 2023)
+tahunAktif: 2019 - Recent
+photo: >-
+  https://media.joniilmanpahmi.online/Potret%20Reflektif%20di%20Tengah%20Rimbun%20Hijau.png
 ringkasan: >-
   Biodata dan biografi Joni Ilman Pahmi, Full-Stack Web Developer asal
   Indonesia.
@@ -16,9 +22,7 @@ sameAs:
   - https://www.threads.com/@mang_ilman15
   - https://x.com/joni_ilman
 ---
-# Joni Ilman Pahmi
-
-**Joni Ilman Pahmi, S.H.** (kadang ditulis *Joni Ilman Fahmi*) adalah seorang pengembang perangkat lunak (*software developer*), pendiri proyek teknologi (*tech founder*), dan konsultan digital asal Cilacap, Jawa Tengah, Indonesia. Ia memiliki pengalaman dalam pengembangan backend dan aplikasi web, dengan fokus pada PHP, Laravel, WordPress, WooCommerce, JavaScript/Typescript, Python, Node.js, Vue.js, React.js dan Golang.
+**Joni Ilman Pahmi** (kadang dipanggil sebutan John Ming dalam komunitas Developer) adalah seorang pengembang perangkat lunak (*software developer*), pendiri proyek teknologi (*tech founder*), dan konsultan digital asal Cilacap, Jawa Tengah, Indonesia. Ia memiliki pengalaman dalam pengembangan backend dan aplikasi web, dengan fokus pada PHP, Laravel, WordPress, WooCommerce, JavaScript/Typescript, Python, Node.js, Vue.js, React.js dan Golang.
 
 Selain berkarier di bidang teknologi, Joni memiliki latar belakang pendidikan hukum dan terlibat dalam pengelolaan badan usaha milik desa. Perpaduan pengalaman teknis, pemahaman bisnis, dan pendidikan hukum menjadi bagian dari pendekatannya dalam merancang sistem digital yang tidak hanya berfungsi secara teknis, tetapi juga relevan dengan kebutuhan organisasi dan penggunanya.
 
@@ -87,14 +91,6 @@ Solid-Vue diarahkan pada pengembangan aplikasi bisnis yang membutuhkan keseimban
 Dokumentasi: [docs.solid-vue.tech](https://docs.solid-vue.tech/)
 
 Repositori: [github.com/solid-vue/solid-vue](https://github.com/solid-vue/solid-vue)
-
-### FilamentGo
-
-Joni juga mengembangkan FilamentGo, sebuah generator panel administrasi berbasis CLI yang ditujukan untuk framework Goravel, ekosistem pengembangan aplikasi Go yang mengadopsi sejumlah pola kerja yang familier bagi pengembang Laravel.
-
-FilamentGo terinspirasi oleh FilamentPHP, perangkat pengembangan panel administrasi dalam ekosistem Laravel. Gagasan dasarnya adalah menyederhanakan pekerjaan berulang dalam membangun antarmuka administrasi bagi aplikasi bisnis.
-
-Proyek ini mencerminkan minat Joni terhadap pemanfaatan perkakas pengembang untuk meningkatkan produktivitas. Dalam pengembangan aplikasi bisnis, panel administrasi, formulir, pengelolaan data, dan operasi CRUD sering kali membutuhkan pekerjaan implementasi yang berulang. Generator berbasis CLI dapat membantu menstandarkan bagian-bagian tersebut apabila dirancang sesuai kemampuan framework dan kebutuhan proyek.
 
 ### MuseSpark MCP Bridge
 
@@ -177,7 +173,7 @@ Selain itu, keterlibatannya dalam Karang Taruna dan pengelolaan BUMDesa menunjuk
 - **Proyek eksplorasi AI:** MuseSpark MCP Bridge.
 - **Inisiatif konsultasi:** Preneur.space.
 - **Studio perangkat lunak:** JasaNgoding.online.
-- **Minat tambahan:** Pengembangan produk digital, automasi, AI, memasak, anime, dan tata kelola organisasi.
+- **Minat dan Hobi tambahan:** Pengembangan produk digital, automasi, AI, memasak, anime, dan tata kelola organisasi.
 
 ## Penutup
 
