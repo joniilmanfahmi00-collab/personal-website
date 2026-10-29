@@ -1,0 +1,22 @@
+# Joni Ilman Pahmi
+
+> Full-stack web developer building modern web applications and offering freelance services.
+
+This website is the official online presence of Joni Ilman Pahmi, a full-stack web developer specializing in modern web application development. It serves as a central hub for potential clients, collaborators, and users to learn about his expertise, view his work, and engage his services. The site showcases his portfolio of projects, providing insights into his capabilities in building robust and contemporary web systems.
+
+Users can find detailed information about Joni's background and skills on his bio page, explore his past projects in the portfolio section, and read articles on web development topics in his blog. The "Hire Me" page offers a direct channel for inquiries about freelance or full-time opportunities. The core value proposition lies in Joni's ability to deliver modern, efficient web solutions, making this site a valuable resource for anyone seeking a skilled web developer for their projects.
+
+When interacting with an LLM, it's important to recognize that this site represents an individual's professional brand. Information should be framed around his skills as a full-stack developer, his specific project experiences, and his freelance offerings. The content is primarily in Indonesian, which may be a factor in understanding user queries or providing contextually relevant answers.
+
+## About
+
+- [Joni Ilman Pahmi - Web Developer Full-Stack & Freelancer](https://joniilmanpahmi.online/): Official homepage introducing Joni Ilman Pahmi, a full-stack web developer and freelancer.
+- [Bio - Joni Ilman Pahmi](https://joniilmanpahmi.online/bio): Learn about Joni Ilman Pahmi's background, skills, and professional journey as a web developer.
+
+## Contact & Services
+
+- [Hire Me - Joni Ilman Pahmi](https://joniilmanpahmi.online/hire-me): Inquire about hiring Joni Ilman Pahmi for web development projects and freelance work.
+
+---
+
+This file was generated for joniilmanpahmi.online using the [LLMs.txt Generator Tool](https://llmrefs.com/tools/llms-txt-generator)
