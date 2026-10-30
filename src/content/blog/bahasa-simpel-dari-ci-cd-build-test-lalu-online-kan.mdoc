@@ -1,0 +1,343 @@
+---
+title: 'Bahasa Simpel dari CI/CD: Build, Test, lalu Online-kan'
+description: >-
+  Pahami CI/CD dengan bahasa sederhana: Build, Test, lalu Online-kan. Pelajari
+  Git, GitHub Actions, automated testing, dan deployment lewat contoh praktis.
+pubDate: 2026-10-31
+author: Joni Ilman Pahmi
+category: Productivity
+schemaType: Article
+tags: >-
+  CI/CD, Git, GitHub Actions, Automated Testing, Deployment, Software
+  Development
+image: >-
+  https://media.joniilmanpahmi.online/CI_CD%20Sederhana_%20Build%2C%20Test%2C%20Online-kan.png
+draft: false
+seo:
+  title: 'Bahasa Simpel dari CI/CD: Build, Test, lalu Online-kan'
+  description: >-
+    Pahami CI/CD dengan bahasa sederhana: Build, Test, lalu Online-kan. Pelajari
+    Git, GitHub Actions, automated testing, dan deployment lewat contoh praktis.
+  canonicalUrl: >-
+    https://joniilmanpahmi.online/blog/bahasa-simpel-dari-ci-cd-build-test-lalu-online-kan
+  ogImage: >-
+    https://media.joniilmanpahmi.online/CI_CD%20Sederhana_%20Build%2C%20Test%2C%20Online-kan.png
+---
+Pernah mendengar istilah *CI/CD* dan merasa seolah-olah istilah itu hanya untuk DevOps Engineer atau developer yang bekerja di perusahaan teknologi besar?
+
+Tenang, kamu tidak sendirian.
+
+Di dunia software development, kita sering bertemu istilah baru yang terdengar rumit. *Continuous Integration, Continuous Delivery, Continuous Deployment, pipeline,* dan *automated testing* mungkin terasa seperti sekumpulan jargon yang harus dipelajari sekaligus sebelum kita bisa mempraktikkannya.
+
+Padahal, esensi CI/CD bisa dijelaskan dengan kalimat yang jauh lebih sederhana:
+
+**Build, Test, lalu Online-kan.**
+
+Fun fact, ini justru bahasa yang diajarkan kakak saya sebelum saya mengenal CI/CD sebagai istilah teknis. Saya belajar memahami alurnya terlebih dahulu, baru kemudian mengenal nama dan konsep formal di baliknya.
+
+Dari situ, saya menyadari satu hal: terkadang kita sudah memahami sebuah konsep, tetapi belum mengetahui istilah teknis yang digunakan industri untuk menyebutnya.
+
+Mari kita bahas dengan cara yang sederhana.
+
+## 1. Build: Siapkan Aplikasi agar Bisa Dijalankan
+
+Dalam pengembangan software, kita menulis kode untuk membuat atau memperbaiki fitur aplikasi.
+
+Setelah perubahan selesai, kode tersebut biasanya disimpan menggunakan Git dan dikirim ke repository seperti GitHub atau GitLab.
+
+Namun, kode yang sudah ditulis belum tentu langsung siap digunakan.
+
+Beberapa aplikasi memerlukan proses build untuk menggabungkan modul, mengompilasi kode, mengoptimalkan aset, atau menghasilkan berkas yang siap dijalankan maupun dipublikasikan.
+
+Misalnya, kamu mengembangkan aplikasi Vue menggunakan Vite. Saat menjalankan perintah:
+
+```
+npm run build
+```
+
+Vite akan memproses aplikasi dan menghasilkan berkas produksi, biasanya di dalam direktori `dist/`.
+
+Itulah salah satu contoh proses build.
+
+Pada aplikasi PHP atau Laravel, kebutuhannya bisa berbeda. PHP tidak selalu memerlukan proses kompilasi menjadi berkas produksi seperti aplikasi frontend, tetapi aplikasi tetap dapat melewati tahapan persiapan, seperti memasang dependensi, memeriksa konfigurasi, dan menyiapkan aset frontend.
+
+Jadi, *build* tidak selalu berarti melakukan hal yang sama pada setiap proyek. Intinya adalah **menyiapkan aplikasi atau artefaknya agar siap melewati tahapan berikutnya.**
+
+## 2. Test: Pastikan Perubahan Tidak Merusak Aplikasi
+
+Setelah aplikasi disiapkan, langkah berikutnya adalah mengujinya.
+
+Bayangkan kamu memperbaiki fitur checkout WooCommerce. Fitur tersebut terlihat berfungsi saat dicoba secara manual.
+
+Namun, apakah perubahan itu juga memengaruhi perhitungan total belanja? Apakah diskon masih berjalan? Apakah pelanggan masih bisa menyelesaikan pesanan?
+
+Kita tentu tidak ingin menemukan bug baru setelah perubahan telanjur digunakan pelanggan.
+
+Karena itulah pengujian menjadi bagian penting dalam workflow development.
+
+Pengujian dapat dilakukan secara manual maupun otomatis. Dalam CI/CD, automated testing memungkinkan mesin menjalankan skrip pengujian secara konsisten setiap kali ada perubahan kode atau ketika kondisi tertentu terpenuhi.
+
+Contoh sederhana di Laravel:
+
+```
+php artisan test
+```
+
+Perintah tersebut menjalankan pengujian yang telah disiapkan dalam proyek Laravel.
+
+Kalau ada pengujian yang gagal, pipeline dapat menghentikan proses berikutnya sehingga perubahan bermasalah tidak langsung diteruskan ke tahap deployment.
+
+Inilah salah satu penerapan prinsip *fail fast*: menemukan masalah sedini mungkin agar lebih mudah ditelusuri dan diperbaiki.
+
+Perlu diingat, tes yang berhasil bukan jaminan mutlak bahwa aplikasi bebas bug. Hasilnya tetap bergantung pada kualitas dan cakupan pengujian yang kita buat.
+
+Namun, pengujian otomatis membantu mengurangi risiko kesalahan yang seharusnya bisa diketahui lebih awal.
+
+## 3. Online-kan: Kirim Aplikasi ke Lingkungan Tujuannya
+
+Setelah aplikasi melewati tahapan yang diperlukan, kita perlu menempatkannya di lingkungan tempat aplikasi akan dijalankan.
+
+Untuk aplikasi web, lingkungan tersebut bisa berupa server sendiri, VPS, layanan hosting, atau platform cloud.
+
+Proses ini dikenal sebagai *deployment*.
+
+Pada workflow manual, developer mungkin perlu menjalankan perintah tertentu, mengunggah berkas, memperbarui aplikasi di server, atau menjalankan langkah lain sesuai kebutuhan proyek.
+
+Sebagian langkah tersebut dapat diotomatisasi. Misalnya, setelah perubahan kode lolos pengujian, sistem dapat menjalankan deployment ke server staging untuk diperiksa lebih lanjut.
+
+Jika semuanya sesuai, aplikasi kemudian dapat dipublikasikan ke lingkungan produksi.
+
+Di sinilah kita perlu mengenal dua istilah yang sering muncul dalam CI/CD.
+
+**Continuous Delivery** berarti perubahan dapat dipersiapkan dan dipastikan siap dirilis, tetapi deployment ke produksi masih memerlukan persetujuan atau tindakan manual.
+
+**Continuous Deployment** berarti perubahan yang memenuhi seluruh aturan pipeline akan otomatis dirilis ke produksi tanpa persetujuan manual pada setiap rilis.
+
+Keduanya bukan sekadar perbedaan nama. Pilihan yang tepat bergantung pada kebutuhan bisnis, risiko perubahan, dan kesiapan tim.
+
+Untuk aplikasi yang menangani transaksi pelanggan, misalnya, tim mungkin memilih deployment otomatis ke staging, tetapi tetap meminta persetujuan sebelum merilis perubahan ke produksi.
+
+Tidak semua proyek harus langsung menerapkan deployment otomatis penuh.
+
+Yang penting adalah membangun proses rilis yang konsisten, dapat diuji, dan sesuai dengan risiko aplikasi.
+
+## Lalu, Apa Hubungannya dengan CI/CD?
+
+Sekarang kita sudah mengenal tiga langkah dasarnya:
+
+```
+       KODE BERUBAH
+            |
+            v
+     [ BUILD / SIAPKAN ]
+            |
+            v
+       [ TEST / UJI ]
+            |
+       Lolos pengujian?
+        /          \
+      Tidak        Ya
+       |            |
+       v            v
+   Perbaiki    [ DEPLOY ]
+    kode            |
+                    v
+             APLIKASI ONLINE
+```
+
+Alur tersebut merupakan gambaran sederhana, bukan aturan bahwa setiap pipeline harus selalu memiliki tahapan yang persis sama.
+
+Dalam praktiknya, kita mungkin menambahkan pemeriksaan kualitas kode, analisis keamanan, pengujian integrasi, deployment ke staging, persetujuan manual, atau langkah lain sesuai kebutuhan.
+
+Lantas, di mana posisi CI/CD?
+
+**Continuous Integration (CI)** berfokus pada pengintegrasian perubahan kode secara rutin ke dalam repository bersama, disertai pemeriksaan otomatis agar masalah dapat diketahui lebih awal.
+
+Contohnya, setiap kali developer melakukan *push* atau membuka *pull request*, sistem menjalankan pemeriksaan kode dan automated tests.
+
+Sementara itu, **Continuous Delivery atau Continuous Deployment (CD)** membawa proses tersebut lebih jauh dengan menyiapkan rilis atau mengotomatiskan pengiriman aplikasi ke lingkungan tujuan.
+
+Dengan kata lain, CI membantu kita memastikan perubahan kode terintegrasi dan diperiksa dengan baik. CD membantu kita membawa perubahan tersebut menuju rilis dengan proses yang lebih konsisten.
+
+Semua tahapan yang terhubung dalam workflow otomatis itu biasa disebut *CI/CD pipeline*.
+
+Pipeline bukan teknologi ajaib yang harus dibangun dari nol. Sederhananya, pipeline adalah rangkaian langkah yang dijalankan sesuai aturan yang kita tentukan.
+
+## Contoh Tools Sederhana untuk Memulai
+
+Kabar baiknya, kamu tidak perlu langsung menggunakan infrastruktur yang rumit atau membangun server otomatisasi sendiri untuk belajar CI/CD.
+
+Kita bisa memulainya dengan tools yang dekat dengan workflow developer sehari-hari.
+
+### 1. Git: Mencatat Perubahan Kode
+
+Git adalah sistem version control yang membantu kita mencatat perubahan, membuat branch, menggabungkan pekerjaan, dan kembali memeriksa riwayat kode.
+
+Git bukan CI/CD itu sendiri. Namun, Git merupakan fondasi penting untuk mengelola perubahan kode dalam workflow yang mendukung CI/CD.
+
+Kamu bisa mempelajarinya melalui dokumentasi resmi Git:
+
+[https://git-scm.com/doc](https://git-scm.com/doc)
+
+### 2. GitHub: Menyimpan Repository dan Mengelola Kolaborasi
+
+GitHub menyediakan repository untuk menyimpan kode serta fitur kolaborasi seperti pull request dan code review.
+
+Ketika developer mengirim perubahan ke repository, perubahan itu bisa menjadi pemicu bagi proses otomatis berikutnya.
+
+Repository adalah tempat kode dikelola; proses otomatisasinya membutuhkan fitur atau layanan tambahan.
+
+Dokumentasi GitHub:
+
+[https://docs.github.com/](https://docs.github.com/)
+
+### 3. GitHub Actions: Menjalankan Workflow Otomatis
+
+GitHub Actions memungkinkan kita mendefinisikan workflow otomatis menggunakan berkas YAML di dalam repository.
+
+Misalnya, kita ingin setiap *push* ke branch `main` menjalankan automated tests pada aplikasi Laravel.
+
+Kita bisa membuat workflow sederhana seperti berikut:
+
+```
+name: Laravel Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo_sqlite
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run tests
+        run: php artisan test
+```
+
+Contoh tersebut menggambarkan alur dasarnya: mengambil kode dari repository, menyiapkan PHP, memasang dependensi, lalu menjalankan tes.
+
+Namun, workflow ini belum tentu bisa langsung dijalankan pada semua proyek Laravel. Konfigurasi PHP, ekstensi, database, environment variables, dan layanan tambahan harus disesuaikan dengan kebutuhan aplikasi. Proyek tertentu juga memerlukan konfigurasi `.env.testing` atau langkah persiapan database sebelum tes berjalan.
+
+Yang menarik, kita sudah menerapkan bagian penting dari CI tanpa harus membuat sistem otomatisasi sendiri.
+
+Dokumentasi resminya bisa dibaca di sini:
+
+[https://docs.github.com/en/actions](https://docs.github.com/en/actions)
+
+### 4. Vite: Contoh Proses Build pada Aplikasi Frontend
+
+Jika kamu mengembangkan aplikasi menggunakan Vue, React, atau framework frontend lain yang menggunakan Vite, kamu bisa memulai dengan perintah:
+
+```
+npm run build
+```
+
+Perintah tersebut menjalankan skrip build yang didefinisikan dalam `package.json`.
+
+Kamu bisa menambahkan perintah ini ke dalam workflow GitHub Actions agar proses build dijalankan otomatis setiap kali ada perubahan kode.
+
+Dengan begitu, kita dapat mendeteksi kegagalan build lebih awal sebelum perubahan diteruskan ke tahap berikutnya.
+
+Dokumentasi Vite:
+
+[https://vite.dev/guide/build.html](https://vite.dev/guide/build.html)
+
+### 5. Platform Deployment: Mengirim Aplikasi ke Lingkungan Tujuan
+
+Setelah build dan pengujian berhasil, kita bisa menghubungkan pipeline dengan platform deployment yang sesuai.
+
+Contohnya, Cloudflare menyediakan layanan untuk men-deploy aplikasi web, sedangkan VPS dapat menggunakan SSH dan skrip deployment sesuai konfigurasi server.
+
+Pilihan lainnya adalah menggunakan layanan seperti Laravel Forge untuk membantu mengelola deployment aplikasi Laravel.
+
+Setiap platform memiliki cara konfigurasi dan persyaratan masing-masing. Jangan lupa menyiapkan secrets, kredensial, serta izin akses dengan aman.
+
+Dokumentasi yang bisa kamu pelajari:
+
+- Cloudflare: [https://developers.cloudflare.com/](https://developers.cloudflare.com/)
+- Laravel Forge: [https://forge.laravel.com/docs](https://forge.laravel.com/docs)
+
+Kamu tidak harus menggunakan semuanya sekaligus. Pilih tools berdasarkan stack, kebutuhan, dan tingkat kompleksitas proyekmu.
+
+## Contoh Workflow Sederhana dalam Kehidupan Developer
+
+Misalnya, kamu sedang mengembangkan fitur baru untuk sebuah aplikasi web.
+
+Biasanya, alurnya mungkin seperti ini:
+
+1. Kamu menulis kode di komputer lokal.
+1. Kamu menjalankan aplikasi untuk memastikan fitur berfungsi.
+1. Kamu menjalankan tes yang tersedia.
+1. Kamu melakukan commit dan push ke repository.
+1. Sistem otomatis menjalankan build dan pengujian.
+1. Jika pemeriksaan berhasil, perubahan bisa diteruskan ke staging atau disiapkan untuk deployment.
+1. Setelah memenuhi aturan rilis, perubahan diterapkan ke produksi.
+
+Tentu, setiap tim memiliki workflow yang berbeda. Ada tim yang menjalankan tes sebelum melakukan push, ada yang mengandalkan pull request, dan ada pula yang memiliki beberapa lapisan pemeriksaan sebelum deployment.
+
+Namun, pola dasarnya tetap mudah dikenali: kita menyiapkan perubahan, memeriksanya, lalu merilisnya dengan cara yang terkontrol.
+
+Kalau selama ini kamu sudah menggunakan Git, menjalankan automated tests, dan melakukan deployment dengan bantuan skrip, bisa jadi kamu sebenarnya sudah menerapkan sebagian prinsip CI/CD.
+
+Kamu hanya perlu memahami bagaimana langkah-langkah tersebut bisa dihubungkan menjadi satu alur yang lebih konsisten.
+
+## Apakah Semua Proses Harus Otomatis?
+
+Tidak.
+
+Otomatisasi bukan tujuan yang harus dikejar tanpa pertimbangan. Tujuannya adalah mengurangi pekerjaan berulang, membuat pemeriksaan lebih konsisten, dan menekan risiko kesalahan yang bisa dicegah.
+
+Untuk proyek kecil, pipeline yang menjalankan tes otomatis mungkin sudah memberikan manfaat besar.
+
+Untuk aplikasi yang lebih kompleks, kita mungkin membutuhkan pemeriksaan keamanan, pengujian integrasi, staging, persetujuan sebelum rilis, hingga strategi rollback jika deployment bermasalah.
+
+Jangan sampai kita menghabiskan lebih banyak waktu membangun sistem otomatisasi daripada menyelesaikan masalah yang sebenarnya dibutuhkan pengguna.
+
+Mulailah dari masalah yang paling sering muncul.
+
+Kalau build sering gagal karena langkah manual yang terlewat, otomatisasikan build.
+
+Kalau perubahan kode sering merusak fitur lama, tambahkan automated tests.
+
+Kalau deployment sering menimbulkan kesalahan konfigurasi, rapikan dan otomatisasikan proses rilis secara bertahap.
+
+Dengan cara ini, CI/CD berkembang mengikuti kebutuhan proyek, bukan sebaliknya.
+
+## Jangan Takut dengan Istilah Teknis Baru
+
+Ada satu hal yang menurut saya penting untuk diingat ketika belajar software development: **jangan sampai kita takut mencoba sesuatu hanya karena istilahnya terdengar rumit.**
+
+Continuous Integration mungkin terdengar asing. Automated Testing mungkin terasa seperti pekerjaan khusus QA. Deployment Pipeline mungkin terdengar seperti infrastruktur yang hanya bisa disentuh DevOps Engineer.
+
+Padahal, ketika kita membongkar maknanya, banyak konsep tersebut berangkat dari kebutuhan yang sangat dekat dengan pekerjaan developer sehari-hari.
+
+Kita menulis kode, menyiapkan aplikasi, memeriksa apakah perubahan berjalan dengan baik, lalu mengirimkannya ke pengguna.
+
+Seiring bertambahnya skala proyek, proses tersebut membutuhkan konsistensi, pengujian, dan otomatisasi yang lebih baik. Dari kebutuhan itulah berbagai praktik dan tools berkembang.
+
+Tentu, CI/CD memiliki detail teknis yang perlu dipelajari. Mengelola secrets, mengatur environment, menangani database migration, menjaga keamanan pipeline, serta melakukan rollback bukan perkara yang bisa diselesaikan hanya dengan menghafal tiga kata.
+
+Namun, kita tidak perlu memahami semuanya sejak hari pertama.
+
+Mulailah dari workflow yang sudah kamu kenal. Pelajari satu tools, coba pada proyek kecil, amati hasilnya, lalu tingkatkan secara bertahap.
+
+Dan siapa tahu, suatu hari nanti kamu akan menyadari bahwa istilah yang dulu terdengar rumit ternyata menggambarkan sesuatu yang sudah kamu lakukan selama ini.
+
+Bagi saya, semuanya bisa dimulai dari satu kalimat sederhana:
+
+**Build, Test, lalu Online-kan.**
