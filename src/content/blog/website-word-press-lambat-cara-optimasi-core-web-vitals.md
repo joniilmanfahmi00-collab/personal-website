@@ -1,7 +1,7 @@
 ---
 title: >-
   Website WordPress Lambat dan Core Web Vitals Merah? Yuk, Belajar Mendiagnosis
-  dan Mengoptimalkannya!
+  dan Mengoptimalkannya
 description: >-
   Website WordPress terasa lambat, skor PageSpeed Insights merah, atau laporan
   Core Web Vitals bermasalah? Yuk, pelajari cara menemukan akar masalahnya dan
