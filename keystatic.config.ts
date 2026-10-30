@@ -84,6 +84,8 @@ const techStackOptions = [
   { label: 'Milligram', value: 'Milligram' },
   { label: 'Tachyons', value: 'Tachyons' },
   { label: 'Tailwind CSS', value: 'Tailwind CSS' },
+  { label: 'Rolldown', value: 'Rolldown'},
+  { label: 'Vite', value: 'Vite'},
 ];
 
 export default config({
