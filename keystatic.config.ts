@@ -22,6 +22,7 @@ const techStackOptions = [
   { label: 'Astro', value: 'Astro' },
   { label: 'React', value: 'React' },
   { label: 'JavaScript', value: 'JavaScript' },
+  { label: 'Tailwind CSS', value: 'Tailwind CSS' },
   { label: 'Laravel', value: 'Laravel' },
   { label: 'PHP', value: 'PHP' },
   { label: 'WordPress', value: 'WordPress' },
@@ -81,11 +82,8 @@ const techStackOptions = [
   { label: 'Spectre.css', value: 'Spectre.css' },
   { label: 'Milligram', value: 'Milligram' },
   { label: 'Tachyons', value: 'Tachyons' },
-  { label: 'Tailwind CSS', value: 'Tailwind CSS' },
-  { label: 'Rolldown', value: 'Rolldown'},
-  { label: 'Vite', value: 'Vite'},
-  { label: 'Zustand', value: 'Zustand'},
-  { label: 'Pinia', value: 'Pinia'},
+  { label: 'Zustand', value: 'Zustand' },
+  { label: 'Pinia', value: 'Pinia' },
 ];
 
 export default config({
@@ -169,7 +167,7 @@ export default config({
         ),
         content: fields.markdoc({
           label: 'Isi Artikel',
-          extension: 'md',
+          extension: 'mdoc',
         }),
       },
     }),
