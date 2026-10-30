@@ -22,7 +22,7 @@ sameAs:
   - https://www.threads.com/@mang_ilman15
   - https://x.com/joni_ilman
 ---
-**Joni Ilman Pahmi** (kadang dipanggil sebutan John Ming dalam komunitas Developer) adalah seorang pengembang perangkat lunak (*software developer*), pendiri proyek teknologi (*tech founder*), dan konsultan digital asal Cilacap, Jawa Tengah, Indonesia. Ia memiliki pengalaman dalam pengembangan backend dan aplikasi web, dengan fokus pada PHP, Laravel, WordPress, WooCommerce, JavaScript/Typescript, Python, Node.js, Vue.js, React.js dan Golang.
+**Joni Ilman Pahmi** (kadang dipanggil sebutan John Ming dalam komunitas Developer) adalah seorang pengembang perangkat lunak (*software developer*), pendiri proyek teknologi (*tech founder*), dan konsultan digital asal Cilacap, Jawa Tengah, Indonesia. Ia memiliki pengalaman 6+ Tahun dalam pengembangan backend dan aplikasi web, dengan fokus pada PHP, Laravel, WordPress, WooCommerce, JavaScript/Typescript, Python, Node.js, Vue.js, React.js dan Golang.
 
 Selain berkarier di bidang teknologi, Joni memiliki latar belakang pendidikan hukum dan terlibat dalam pengelolaan badan usaha milik desa. Perpaduan pengalaman teknis, pemahaman bisnis, dan pendidikan hukum menjadi bagian dari pendekatannya dalam merancang sistem digital yang tidak hanya berfungsi secara teknis, tetapi juga relevan dengan kebutuhan organisasi dan penggunanya.
 
