@@ -60,6 +60,63 @@ img {
   margin-bottom: 1.1rem;
 }
 
+/* Table pikeun eusi artikel Markdoc, kaasup scroll horizontal dina layar leutik. */
+.prose table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  border: 1px solid #dbe3e8;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 0.9rem;
+  background: #fff;
+  color: #0f172a;
+  scrollbar-color: #94a3b8 transparent;
+}
+
+.prose thead {
+  background: #edf4f7;
+  color: #1b4b66;
+}
+
+.prose th,
+.prose td {
+  min-width: 9rem;
+  border-bottom: 1px solid #dbe3e8;
+  padding: 0.8rem 1rem;
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.prose th {
+  font-weight: 700;
+}
+
+.prose tbody tr:nth-child(even) {
+  background: #f7f9fa;
+}
+
+.prose tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.prose th + th,
+.prose td + td {
+  border-left: 1px solid #dbe3e8;
+}
+
+.prose table::-webkit-scrollbar {
+  height: 0.55rem;
+}
+
+.prose table::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #94a3b8;
+}
+
 /* Tailwind Preflight removes list markers; restore them for rendered article content. */
 .prose ul,
 .prose ol {
@@ -152,6 +209,26 @@ img {
 
 .dark .prose code {
   background: rgba(148, 163, 184, 0.12);
+}
+
+.dark .prose table {
+  border-color: #334155;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.dark .prose thead {
+  background: #1e293b;
+  color: #bfdbfe;
+}
+
+.dark .prose th,
+.dark .prose td {
+  border-color: #334155;
+}
+
+.dark .prose tbody tr:nth-child(even) {
+  background: #111c2e;
 }
 
 .dark .prose blockquote {
