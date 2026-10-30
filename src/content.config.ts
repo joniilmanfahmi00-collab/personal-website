@@ -28,7 +28,7 @@ const bio = defineCollection({
 
 const blog = defineCollection({
   loader: glob({
-    pattern: 'blog/**/*.md',
+    pattern: 'blog/**/*.mdoc',
     base: './src/content',
     generateId: ({ entry }) => entry.replace(/^blog\//, '').replace(/\.md$/i, ''),
   }),
