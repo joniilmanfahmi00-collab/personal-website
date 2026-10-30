@@ -12,7 +12,7 @@ stack:
   - React
   - Node.js
   - Vite
-image: https://media.joniilmanpahmi.online/Desain%20tanpa%20judul.jpg
+image: https://media.joniilmanpahmi.online/brave_ealbRpyi3m.png
 liveUrl: https://preneur.space/
 draft: false
 ---
