@@ -12,6 +12,7 @@ stack:
   - React
   - Node.js
   - Vite
+  - Tailwind CSS
 image: https://media.joniilmanpahmi.online/brave_ealbRpyi3m.png
 liveUrl: https://preneur.space/
 draft: false
