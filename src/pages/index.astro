@@ -6,12 +6,12 @@ import Layout from '../layouts/MainLayouts.astro';
 import HeroTerminal from '../components/HeroTerminal.astro';
 import { getReadingTimeMinutes } from '../utils/readingTime';
 
-const siteTitle = 'Joni Ilman Pahmi - Web Developer Full-Stack & Freelancer';
+const siteTitle = 'Joni Ilman Pahmi - Personal Website & Portofolio';
 
 // TODO: Ganti dengan alamat email asli sebelum deploy.
 const contactEmail = "halo@joniilmanpahmi.online";
 const contactMailto = `mailto:${contactEmail}?subject=Diskusi%20Proyek%20-%20Joni%20Ilman%20Pahmi`;
-const siteDescription = 'Selamat datang di situs resmi Joni Ilman Pahmi, seorang pengembang web full-stack yang fokus pada pembuatan aplikasi web modern. Temukan portofolio, blog, dan informasi kontak di sini.';
+const siteDescription = 'Selamat datang di situs resmi Joni Ilman Pahmi, seorang insinyur perangkat lunak full-stack yang fokus pada pembuatan aplikasi modern. Temukan portofolio, blog, dan informasi kontak di sini.';
 
 const statusBar = [
     { icon: 'lucide:rocket', label: 'Prioritas Performa' },
@@ -36,7 +36,8 @@ const techStackCategories = [
             { name: "Astro", icon: "tabler:brand-astro", level: "Intermediate" },
             { name: "NextJS", icon: "tabler:brand-nextjs", level: "Advanced"},
             { name: "NestJS", icon: "simple-icons:nestjs", level: "Advanced" },
-            { name: "AdonisJS", icon: "simple-icons:adonisjs", level: "Advanced" }
+            { name: "AdonisJS", icon: "simple-icons:adonisjs", level: "Advanced" },
+            { name: "Rust", icon: "simple-icons:rust", level: "Advanced" }
         ]
     },
     {
@@ -51,7 +52,8 @@ const techStackCategories = [
             { name: "TypeScript", icon: "tabler:brand-typescript", level: "Advanced" },
             { name: "Astro", icon: "tabler:brand-astro", level: "Expert" },
             { name: "React", icon: "tabler:brand-react", level: "Advanced"},
-            { name: "Vue", icon: "tabler:brand-vue", level: "Advanced"}
+            { name: "Vue", icon: "tabler:brand-vue", level: "Advanced"},
+            { name: "Slint", icon: "simple-icons:slint", level: "Advanced" }
         ]
     },
     {
@@ -69,7 +71,8 @@ const techStackCategories = [
             { name: "Supabase", icon: "simple-icons:supabase", level: "Beginner" },
             { name: "Cloudflare", icon: "simple-icons:cloudflare", level: "Expert" },
             { name: "Vercel", icon: "simple-icons:vercel", level: "Advanced" },
-            { name: "Netlify", icon: "simple-icons:netlify", level: "Advanced" }
+            { name: "Netlify", icon: "simple-icons:netlify", level: "Advanced" },
+            { name: "Linux", icon: "simple-icons:linux", level: "Advanced" }
         ]
     }, 
 ];
@@ -122,7 +125,7 @@ const purwarupaArtikel = publishedPosts.map((post) => {
                     <div class="terminal-prompt inline-flex flex-col gap-1 mb-6 px-4 py-3 rounded-lg font-mono text-xs sm:text-sm text-left w-fit">
                         <span class="text-[#4C9A6A]">guest@jonipahmi:~$ whoami</span>
                         <span class="text-slate-300">
-                            <span class="text-[#E8935B]">&gt;</span> Pengembang Web Full-Stack · Freelancer · Kreator Konten <span class="cursor-blink text-slate-300" aria-hidden="true">▍</span>
+                            <span class="text-[#E8935B]">&gt;</span> Software Engineer · Open Source Contributor · Computer Scientist <span class="cursor-blink text-slate-300" aria-hidden="true">▍</span>
                         </span>
                     </div>
 
